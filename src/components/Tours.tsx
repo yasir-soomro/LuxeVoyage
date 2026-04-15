@@ -9,6 +9,8 @@ export default function Tours() {
   const [activeTag, setActiveTag] = useState("All");
   const [selectedTour, setSelectedTour] = useState<null | typeof tours[0]>(null);
   const [isBooked, setIsBooked] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [errors, setErrors] = useState({ name: "", email: "" });
 
   const allTags = useMemo(() => {
     const tags = new Set<string>();
@@ -21,14 +23,44 @@ export default function Tours() {
     return tours.filter((tour) => tour.tags.includes(activeTag));
   }, [activeTag]);
 
-  const handleBooking = (e: React.FormEvent) => {
+  const closeModal = () => {
+    setSelectedTour(null);
+    setIsExpanded(false);
+    setErrors({ name: "", email: "" });
+  };
+
+  const handleBooking = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    
+    let hasError = false;
+    const newErrors = { name: "", email: "" };
+
+    if (!name.trim()) {
+      newErrors.name = "Name is required";
+      hasError = true;
+    }
+    if (!email.trim() || !/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = "Valid email is required";
+      hasError = true;
+    }
+
+    if (hasError) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({ name: "", email: "" });
     setIsBooked(true);
     setTimeout(() => {
       setIsBooked(false);
-      setSelectedTour(null);
+      closeModal();
     }, 3000);
   };
+
+  const toggleDescription = () => setIsExpanded(!isExpanded);
 
   return (
     <section id="tours" className="py-24 bg-black">
@@ -79,7 +111,7 @@ export default function Tours() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm"
-            onClick={() => setSelectedTour(null)}
+            onClick={closeModal}
             role="presentation"
           >
             <motion.div
@@ -94,7 +126,7 @@ export default function Tours() {
               aria-describedby="modal-description"
             >
               <button
-                onClick={() => setSelectedTour(null)}
+                onClick={closeModal}
                 className="absolute top-4 right-4 p-2 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors z-10"
                 aria-label="Close modal"
               >
@@ -110,7 +142,16 @@ export default function Tours() {
                 />
                 
                 <h2 id="modal-title" className="text-3xl font-serif font-bold text-white mb-4">{selectedTour.title}</h2>
-                <p id="modal-description" className="text-zinc-400 mb-6">{selectedTour.description}</p>
+                <p id="modal-description" className="text-zinc-400 mb-6">
+                  {isExpanded || selectedTour.description.length <= 150 
+                    ? selectedTour.description 
+                    : `${selectedTour.description.substring(0, 150)}...`}
+                  {selectedTour.description.length > 150 && (
+                    <button onClick={toggleDescription} className="text-white ml-2 underline hover:text-zinc-300">
+                      {isExpanded ? "Read Less" : "Read More"}
+                    </button>
+                  )}
+                </p>
                 
                 <div className="grid grid-cols-2 gap-4 mb-8">
                   <div className="bg-black/50 p-4 rounded-xl">
@@ -136,8 +177,10 @@ export default function Tours() {
                     </motion.div>
                   ) : (
                     <form className="space-y-4" onSubmit={handleBooking}>
-                      <input type="text" placeholder="Your Name" aria-label="Your Name" required className="w-full bg-black border border-white/10 rounded-xl p-3 text-white" />
-                      <input type="email" placeholder="Your Email" aria-label="Your Email" required className="w-full bg-black border border-white/10 rounded-xl p-3 text-white" />
+                      <input name="name" type="text" placeholder="Your Name" aria-label="Your Name" className="w-full bg-black border border-white/10 rounded-xl p-3 text-white" />
+                      {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+                      <input name="email" type="email" placeholder="Your Email" aria-label="Your Email" className="w-full bg-black border border-white/10 rounded-xl p-3 text-white" />
+                      {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
                       <Button type="submit" className="w-full bg-white text-black hover:bg-white/90">Confirm Booking</Button>
                     </form>
                   )}
