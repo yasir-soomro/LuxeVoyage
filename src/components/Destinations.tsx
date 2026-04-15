@@ -21,7 +21,7 @@ export default function Destinations() {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 [perspective:1000px]">
           {destinations.map((dest, index) => (
             <motion.div
               key={dest.id}
@@ -29,9 +29,10 @@ export default function Destinations() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="group cursor-pointer"
+              whileHover={{ rotateY: 10, rotateX: 5, scale: 1.05 }}
+              className="group cursor-pointer [transform-style:preserve-3d]"
             >
-              <div className="relative aspect-[3/4] overflow-hidden rounded-[2rem] mb-6">
+              <div className="relative aspect-[3/4] overflow-hidden rounded-[2rem] mb-6 shadow-2xl shadow-black/50">
                 <img
                   src={dest.image}
                   alt={dest.name}

@@ -1,13 +1,21 @@
-import { motion } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
 import { Search, MapPin, Calendar, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useRef } from "react";
 
 export default function Hero() {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"],
+  });
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+
   return (
-    <section className="relative h-screen flex items-center justify-center overflow-hidden">
+    <section ref={ref} className="relative h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
-      <div className="absolute inset-0 z-0">
+      <motion.div style={{ y }} className="absolute inset-0 z-0">
         <img
           src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&q=80&w=2000"
           alt="Travel Background"
@@ -15,7 +23,7 @@ export default function Hero() {
           referrerPolicy="no-referrer"
         />
         <div className="absolute inset-0 bg-black/60" />
-      </div>
+      </motion.div>
 
       <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
         <motion.div
