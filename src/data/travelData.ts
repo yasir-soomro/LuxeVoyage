@@ -42,6 +42,7 @@ export const tours = [
     duration: "8 Days",
     rating: 4.9,
     image: "https://images.unsplash.com/photo-1523528283115-9bf9b1aa992a?auto=format&fit=crop&q=80&w=1000",
+    video: "https://www.w3schools.com/html/mov_bbb.mp4",
     tags: ["Luxury", "Culinary"],
     description: "Experience the heart of Italy with private vineyard tours, exclusive cooking classes with local chefs, and stays in historic villas."
   },
@@ -53,6 +54,7 @@ export const tours = [
     duration: "6 Days",
     rating: 4.8,
     image: "https://images.unsplash.com/photo-1531366930499-41f6693d15dc?auto=format&fit=crop&q=80&w=1000",
+    video: "https://www.w3schools.com/html/movie.mp4",
     tags: ["Adventure", "Nature"],
     description: "Chase the aurora borealis across the dramatic Icelandic landscape, featuring glacier hikes and geothermal spa visits."
   },
@@ -64,6 +66,7 @@ export const tours = [
     duration: "10 Days",
     rating: 5.0,
     image: "https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=1000",
+    video: "https://www.w3schools.com/html/mov_bbb.mp4",
     tags: ["Wildlife", "Exclusive"],
     description: "Witness the Great Migration on this exclusive safari, staying in luxury eco-lodges deep within the Serengeti plains."
   }
