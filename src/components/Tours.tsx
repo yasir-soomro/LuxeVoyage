@@ -1,6 +1,6 @@
-import React, { useState, useMemo, useRef } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
-import { Star, Clock, MapPin, ArrowRight, X, CheckCircle } from "lucide-react";
+import { Star, Clock, MapPin, ArrowRight, X, CheckCircle, Heart } from "lucide-react";
 import { tours } from "@/src/data/travelData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,17 +11,39 @@ export default function Tours() {
   const [isBooked, setIsBooked] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [errors, setErrors] = useState({ name: "", email: "" });
+  
+  const [wishlist, setWishlist] = useState<number[]>(() => {
+    try {
+      const saved = localStorage.getItem('luxevoyage_wishlist');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem('luxevoyage_wishlist', JSON.stringify(wishlist));
+  }, [wishlist]);
+
+  const toggleWishlist = (id: number) => {
+    setWishlist(prev => prev.includes(id) ? prev.filter(tid => tid !== id) : [...prev, id]);
+  };
 
   const allTags = useMemo(() => {
     const tags = new Set<string>();
     tours.forEach((tour) => tour.tags.forEach((tag) => tags.add(tag)));
-    return ["All", ...Array.from(tags)];
-  }, []);
+    const baseTags = ["All", ...Array.from(tags)];
+    if (wishlist.length > 0) {
+      baseTags.push("Saved");
+    }
+    return baseTags;
+  }, [wishlist.length]);
 
   const filteredTours = useMemo(() => {
+    if (activeTag === "Saved") return tours.filter(tour => wishlist.includes(tour.id));
     if (activeTag === "All") return tours;
     return tours.filter((tour) => tour.tags.includes(activeTag));
-  }, [activeTag]);
+  }, [activeTag, wishlist]);
 
   const closeModal = () => {
     setSelectedTour(null);
@@ -97,7 +119,16 @@ export default function Tours() {
         >
           <AnimatePresence mode="popLayout">
             {filteredTours.map((tour) => (
-              <TourCard key={tour.id} tour={tour} onClick={() => setSelectedTour(tour)} />
+              <TourCard 
+                key={tour.id} 
+                tour={tour} 
+                onClick={() => setSelectedTour(tour)} 
+                isWishlisted={wishlist.includes(tour.id)}
+                onToggleWishlist={(e) => {
+                  e.stopPropagation();
+                  toggleWishlist(tour.id);
+                }}
+              />
             ))}
           </AnimatePresence>
         </motion.div>
@@ -197,9 +228,11 @@ export default function Tours() {
 interface TourCardProps {
   tour: typeof tours[0];
   onClick: () => void;
+  isWishlisted: boolean;
+  onToggleWishlist: (e: React.MouseEvent) => void;
 }
 
-const TourCard: React.FC<TourCardProps> = ({ tour, onClick }) => {
+const TourCard: React.FC<TourCardProps> = ({ tour, onClick, isWishlisted, onToggleWishlist }) => {
   const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -257,6 +290,13 @@ const TourCard: React.FC<TourCardProps> = ({ tour, onClick }) => {
             </Badge>
           ))}
         </div>
+        <button
+          onClick={onToggleWishlist}
+          className="absolute top-4 right-4 p-2 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors z-10 backdrop-blur-sm"
+          aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+        >
+          <Heart className={`w-5 h-5 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-white'}`} />
+        </button>
         <div className="absolute bottom-4 right-4 bg-black/90 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-1 text-sm font-bold text-white">
           <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
           {tour.rating}
