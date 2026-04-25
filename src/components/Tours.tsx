@@ -248,12 +248,13 @@ const TourCard: React.FC<TourCardProps> = ({ tour, onClick, isWishlisted, onTogg
       initial={{ opacity: 0, scale: 0.95 }}
       whileInView={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
+      whileHover={{ y: -8 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.5, ease: "easeOut" }}
       onClick={onClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group bg-zinc-900 rounded-3xl overflow-hidden border border-white/10 hover:shadow-2xl hover:shadow-white/5 transition-all duration-500 cursor-pointer"
+      className="group bg-zinc-900 rounded-3xl overflow-hidden border border-white/10 hover:shadow-2xl hover:shadow-white/10 transition-all duration-500 cursor-pointer"
     >
       <div className="relative aspect-[16/10] overflow-hidden">
         <AnimatePresence mode="wait">
@@ -273,9 +274,10 @@ const TourCard: React.FC<TourCardProps> = ({ tour, onClick, isWishlisted, onTogg
             <motion.img
               key="image"
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              animate={{ opacity: 1, scale: isHovered ? 1.25 : 1.2 }}
               exit={{ opacity: 0 }}
-              style={{ y, scale: 1.2 }}
+              transition={{ duration: 0.7, ease: "easeOut" }}
+              style={{ y }}
               src={tour.image}
               alt={tour.title}
               className="w-full h-full object-cover"
