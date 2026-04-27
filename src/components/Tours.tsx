@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
-import { Star, Clock, MapPin, ArrowRight, X, CheckCircle, Heart } from "lucide-react";
+import { Star, Clock, MapPin, ArrowRight, X, CheckCircle, Heart, Loader2 } from "lucide-react";
 import { tours } from "@/src/data/travelData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +9,8 @@ export default function Tours() {
   const [activeTag, setActiveTag] = useState("All");
   const [selectedTour, setSelectedTour] = useState<null | typeof tours[0]>(null);
   const [isBooked, setIsBooked] = useState(false);
+  const [isBooking, setIsBooking] = useState(false);
+  const [isLoadingTours, setIsLoadingTours] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
   const [errors, setErrors] = useState({ name: "", email: "" });
   
@@ -24,6 +26,13 @@ export default function Tours() {
   useEffect(() => {
     localStorage.setItem('luxevoyage_wishlist', JSON.stringify(wishlist));
   }, [wishlist]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoadingTours(false);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const toggleWishlist = (id: number) => {
     setWishlist(prev => prev.includes(id) ? prev.filter(tid => tid !== id) : [...prev, id]);
@@ -49,6 +58,8 @@ export default function Tours() {
     setSelectedTour(null);
     setIsExpanded(false);
     setErrors({ name: "", email: "" });
+    setIsBooking(false);
+    setIsBooked(false);
   };
 
   const handleBooking = (e: React.FormEvent<HTMLFormElement>) => {
@@ -75,11 +86,15 @@ export default function Tours() {
     }
 
     setErrors({ name: "", email: "" });
-    setIsBooked(true);
+    setIsBooking(true);
     setTimeout(() => {
-      setIsBooked(false);
-      closeModal();
-    }, 3000);
+      setIsBooking(false);
+      setIsBooked(true);
+      setTimeout(() => {
+        setIsBooked(false);
+        closeModal();
+      }, 3000);
+    }, 1500);
   };
 
   const toggleDescription = () => setIsExpanded(!isExpanded);
@@ -117,20 +132,28 @@ export default function Tours() {
           layout
           className="grid grid-cols-1 lg:grid-cols-3 gap-10"
         >
-          <AnimatePresence mode="popLayout">
-            {filteredTours.map((tour) => (
-              <TourCard 
-                key={tour.id} 
-                tour={tour} 
-                onClick={() => setSelectedTour(tour)} 
-                isWishlisted={wishlist.includes(tour.id)}
-                onToggleWishlist={(e) => {
-                  e.stopPropagation();
-                  toggleWishlist(tour.id);
-                }}
-              />
-            ))}
-          </AnimatePresence>
+          {isLoadingTours ? (
+            <>
+              <TourCardSkeleton />
+              <TourCardSkeleton />
+              <TourCardSkeleton />
+            </>
+          ) : (
+            <AnimatePresence mode="popLayout">
+              {filteredTours.map((tour) => (
+                <TourCard 
+                  key={tour.id} 
+                  tour={tour} 
+                  onClick={() => setSelectedTour(tour)} 
+                  isWishlisted={wishlist.includes(tour.id)}
+                  onToggleWishlist={(e) => {
+                    e.stopPropagation();
+                    toggleWishlist(tour.id);
+                  }}
+                />
+              ))}
+            </AnimatePresence>
+          )}
         </motion.div>
       </div>
 
@@ -212,7 +235,16 @@ export default function Tours() {
                       {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
                       <input name="email" type="email" placeholder="Your Email" aria-label="Your Email" className="w-full bg-black border border-white/10 rounded-xl p-3 text-white" />
                       {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-                      <Button type="submit" className="w-full bg-white text-black hover:bg-white/90">Confirm Booking</Button>
+                      <Button type="submit" disabled={isBooking} className="w-full bg-white text-black hover:bg-white/90">
+                        {isBooking ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Processing...
+                          </>
+                        ) : (
+                          "Confirm Booking"
+                        )}
+                      </Button>
                     </form>
                   )}
                 </div>
@@ -332,3 +364,18 @@ const TourCard: React.FC<TourCardProps> = ({ tour, onClick, isWishlisted, onTogg
     </motion.div>
   );
 };
+
+const TourCardSkeleton = () => (
+  <div className="bg-zinc-900 rounded-3xl overflow-hidden border border-white/10 animate-pulse">
+    <div className="aspect-[16/10] bg-zinc-800"></div>
+    <div className="p-8">
+      <div className="h-4 w-24 bg-zinc-800 rounded mb-4"></div>
+      <div className="h-8 w-4/5 bg-zinc-800 rounded mb-6"></div>
+      <div className="flex gap-6 mb-8">
+        <div className="h-4 w-20 bg-zinc-800 rounded"></div>
+        <div className="h-4 w-24 bg-zinc-800 rounded"></div>
+      </div>
+      <div className="h-12 w-full bg-zinc-800 rounded-xl"></div>
+    </div>
+  </div>
+);
