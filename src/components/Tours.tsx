@@ -13,6 +13,7 @@ export default function Tours() {
   const [isLoadingTours, setIsLoadingTours] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
   const [errors, setErrors] = useState({ name: "", email: "" });
+  const [bookingDetails, setBookingDetails] = useState<{id: string, name: string, email: string, tourTitle: string} | null>(null);
   
   const [wishlist, setWishlist] = useState<number[]>(() => {
     try {
@@ -60,6 +61,7 @@ export default function Tours() {
     setErrors({ name: "", email: "" });
     setIsBooking(false);
     setIsBooked(false);
+    setBookingDetails(null);
   };
 
   const handleBooking = (e: React.FormEvent<HTMLFormElement>) => {
@@ -89,11 +91,26 @@ export default function Tours() {
     setIsBooking(true);
     setTimeout(() => {
       setIsBooking(false);
+      
+      const bookingId = `BKG-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+      const newBooking = {
+        id: bookingId,
+        name,
+        email,
+        tourTitle: selectedTour?.title || "",
+        date: new Date().toISOString()
+      };
+      
+      const existingBookings = JSON.parse(localStorage.getItem('luxevoyage_bookings') || '[]');
+      localStorage.setItem('luxevoyage_bookings', JSON.stringify([...existingBookings, newBooking]));
+      
+      setBookingDetails(newBooking);
       setIsBooked(true);
+      
       setTimeout(() => {
         setIsBooked(false);
         closeModal();
-      }, 3000);
+      }, 5000);
     }, 1500);
   };
 
@@ -218,16 +235,80 @@ export default function Tours() {
                   </div>
                 </div>
 
+                {selectedTour.itinerary && (
+                  <div className="border-t border-white/10 pt-6 mb-6">
+                    <h4 className="text-white font-bold mb-4 text-lg">Itinerary</h4>
+                    <div className="space-y-4">
+                      {selectedTour.itinerary.map((day, idx) => (
+                        <div key={idx} className="flex gap-4">
+                          <div className="flex-shrink-0 w-12 h-12 bg-black/50 text-white rounded-lg flex items-center justify-center font-bold">
+                            D{day.day}
+                          </div>
+                          <div className="flex flex-col justify-center">
+                            <p className="text-white font-medium">{day.title}</p>
+                            <p className="text-zinc-400 text-sm mt-1">{day.desc}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {selectedTour.included && (
+                  <div className="border-t border-white/10 pt-6 mb-6">
+                    <h4 className="text-white font-bold mb-4 text-lg">What's Included</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {selectedTour.included.map((item, idx) => (
+                        <div key={idx} className="flex items-center gap-2 text-zinc-300 text-sm bg-black/30 p-2 rounded-lg">
+                          <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                          <span>{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {selectedTour.reviews && (
+                  <div className="border-t border-white/10 pt-6 mb-8">
+                    <h4 className="text-white font-bold mb-4 text-lg">Traveler Reviews</h4>
+                    <div className="space-y-4">
+                      {selectedTour.reviews.map((review, idx) => (
+                        <div key={idx} className="bg-black/50 p-4 rounded-xl">
+                          <div className="flex items-center gap-1 mb-2">
+                            {[...Array(review.rating)].map((_, i) => (
+                              <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                            ))}
+                          </div>
+                          <p className="text-zinc-300 text-sm mb-2">{review.text}</p>
+                          <p className="text-zinc-500 text-xs font-medium">— {review.author}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <div className="border-t border-white/10 pt-6">
                   <h3 className="text-white font-bold mb-4">Book This Tour</h3>
                   {isBooked ? (
                     <motion.div 
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="bg-green-900/30 border border-green-500/50 p-4 rounded-xl flex items-center gap-3 text-green-400"
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="bg-green-900/10 border border-green-500/30 p-6 rounded-2xl flex flex-col items-center justify-center text-center gap-2"
                     >
-                      <CheckCircle className="w-6 h-6" />
-                      <p>Booking successful! We will contact you soon.</p>
+                      <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-2">
+                        <CheckCircle className="w-8 h-8 text-green-400" />
+                      </div>
+                      <h4 className="text-xl font-bold text-white">Booking Confirmed!</h4>
+                      
+                      {bookingDetails && (
+                        <div className="bg-black/50 p-4 rounded-xl text-left border border-white/5 space-y-3 mt-4 text-sm w-full">
+                          <div className="flex justify-between items-center"><span className="text-zinc-500">Booking ID</span> <span className="text-white font-mono font-medium">{bookingDetails.id}</span></div>
+                          <div className="flex justify-between items-center"><span className="text-zinc-500">Tour</span> <span className="text-white text-right max-w-[150px] truncate" title={bookingDetails.tourTitle}>{bookingDetails.tourTitle}</span></div>
+                          <div className="flex justify-between items-center"><span className="text-zinc-500">Name</span> <span className="text-white text-right max-w-[150px] truncate" title={bookingDetails.name}>{bookingDetails.name}</span></div>
+                          <div className="flex justify-between items-center"><span className="text-zinc-500">Email</span> <span className="text-white text-right truncate max-w-[150px]" title={bookingDetails.email}>{bookingDetails.email}</span></div>
+                        </div>
+                      )}
+                      <p className="text-zinc-400 text-sm mt-4">A confirmation has been sent to your email.</p>
                     </motion.div>
                   ) : (
                     <form className="space-y-4" onSubmit={handleBooking}>

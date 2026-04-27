@@ -44,7 +44,17 @@ export const tours = [
     image: "https://images.unsplash.com/photo-1523528283115-9bf9b1aa992a?auto=format&fit=crop&q=80&w=1000",
     video: "https://www.w3schools.com/html/mov_bbb.mp4",
     tags: ["Luxury", "Culinary"],
-    description: "Experience the heart of Italy with private vineyard tours, exclusive cooking classes with local chefs, and stays in historic villas."
+    description: "Experience the heart of Italy with private vineyard tours, exclusive cooking classes with local chefs, and stays in historic villas.",
+    itinerary: [
+      { day: 1, title: "Arrival in Florence", desc: "Welcome dinner and wine pairing." },
+      { day: 2, title: "Chianti Region", desc: "Vineyard tours and cheese tasting." },
+      { day: 3, title: "Siena & San Gimignano", desc: "Historical tours and pasta making class." },
+    ],
+    included: ["7 Nights Luxury Accommodation", "All meals & wine pairings", "Private transfers", "Expert local guide"],
+    reviews: [
+      { author: "Sarah M.", text: "Absolutely phenomenal experience! The food was incredible.", rating: 5 },
+      { author: "David K.", text: "A truly luxurious way to see Tuscany.", rating: 5 }
+    ]
   },
   {
     id: 2,
@@ -56,7 +66,17 @@ export const tours = [
     image: "https://images.unsplash.com/photo-1531366930499-41f6693d15dc?auto=format&fit=crop&q=80&w=1000",
     video: "https://www.w3schools.com/html/movie.mp4",
     tags: ["Adventure", "Nature"],
-    description: "Chase the aurora borealis across the dramatic Icelandic landscape, featuring glacier hikes and geothermal spa visits."
+    description: "Chase the aurora borealis across the dramatic Icelandic landscape, featuring glacier hikes and geothermal spa visits.",
+    itinerary: [
+      { day: 1, title: "Welcome to Reykjavik", desc: "City tour and Blue Lagoon visit." },
+      { day: 2, title: "Golden Circle", desc: "Geysers, waterfalls, and national parks." },
+      { day: 3, title: "South Coast Adventure", desc: "Glacier hike and black sand beaches." },
+    ],
+    included: ["5 Nights Premium Accommodation", "Super Jeep tours", "Thermal spa entries", "Winter gear rental"],
+    reviews: [
+      { author: "Emily R.", text: "Seeing the Northern Lights was a dream come true.", rating: 5 },
+      { author: "Mark T.", text: "Very well organized, but quite cold!", rating: 4 }
+    ]
   },
   {
     id: 3,
@@ -68,7 +88,17 @@ export const tours = [
     image: "https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=1000",
     video: "https://www.w3schools.com/html/mov_bbb.mp4",
     tags: ["Wildlife", "Exclusive"],
-    description: "Witness the Great Migration on this exclusive safari, staying in luxury eco-lodges deep within the Serengeti plains."
+    description: "Witness the Great Migration on this exclusive safari, staying in luxury eco-lodges deep within the Serengeti plains.",
+    itinerary: [
+      { day: 1, title: "Arusha Arrival", desc: "Transfer to lodge and brief orientation." },
+      { day: 2, title: "Tarangire National Park", desc: "First game drive spotting elephants." },
+      { day: 3, title: "Serengeti Plains", desc: "Following the Great Migration." },
+    ],
+    included: ["9 Nights Luxury Eco-Lodge", "All game drives in 4x4", "Domestic flights", "Park fees"],
+    reviews: [
+      { author: "Jessica H.", text: "The wildlife viewing was out of this world.", rating: 5 },
+      { author: "Michael B.", text: "Our guide was incredibly knowledgeable. Worth every penny.", rating: 5 }
+    ]
   }
 ];
 
