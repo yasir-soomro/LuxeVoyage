@@ -43,6 +43,11 @@ export const tours = [
     rating: 4.9,
     image: "https://images.unsplash.com/photo-1523528283115-9bf9b1aa992a?auto=format&fit=crop&q=80&w=1000",
     video: "https://www.w3schools.com/html/mov_bbb.mp4",
+    images: [
+      "https://images.unsplash.com/photo-1523528283115-9bf9b1aa992a?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1516483638261-f40af5eb2756?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1498503182468-3b51cbb6cb24?auto=format&fit=crop&q=80&w=1000"
+    ],
     tags: ["Luxury", "Culinary"],
     description: "Experience the heart of Italy with private vineyard tours, exclusive cooking classes with local chefs, and stays in historic villas.",
     itinerary: [
@@ -65,6 +70,11 @@ export const tours = [
     rating: 4.8,
     image: "https://images.unsplash.com/photo-1531366930499-41f6693d15dc?auto=format&fit=crop&q=80&w=1000",
     video: "https://www.w3schools.com/html/movie.mp4",
+    images: [
+      "https://images.unsplash.com/photo-1531366930499-41f6693d15dc?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1476610182048-b716b8518aae?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1504829857797-cb23428c946e?auto=format&fit=crop&q=80&w=1000"
+    ],
     tags: ["Adventure", "Nature"],
     description: "Chase the aurora borealis across the dramatic Icelandic landscape, featuring glacier hikes and geothermal spa visits.",
     itinerary: [
@@ -87,6 +97,11 @@ export const tours = [
     rating: 5.0,
     image: "https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=1000",
     video: "https://www.w3schools.com/html/mov_bbb.mp4",
+    images: [
+      "https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1547471080-7cb2ac647087?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1523805009056-963b516de0b0?auto=format&fit=crop&q=80&w=1000"
+    ],
     tags: ["Wildlife", "Exclusive"],
     description: "Witness the Great Migration on this exclusive safari, staying in luxury eco-lodges deep within the Serengeti plains.",
     itinerary: [

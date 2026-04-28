@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
-import { Star, Clock, MapPin, ArrowRight, X, CheckCircle, Heart, Loader2 } from "lucide-react";
+import { Star, Clock, MapPin, ArrowRight, X, CheckCircle, Heart, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { tours } from "@/src/data/travelData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +12,7 @@ export default function Tours() {
   const [isBooking, setIsBooking] = useState(false);
   const [isLoadingTours, setIsLoadingTours] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [errors, setErrors] = useState({ name: "", email: "" });
   const [bookingDetails, setBookingDetails] = useState<{id: string, name: string, email: string, tourTitle: string} | null>(null);
   
@@ -58,10 +59,25 @@ export default function Tours() {
   const closeModal = () => {
     setSelectedTour(null);
     setIsExpanded(false);
+    setCurrentImageIndex(0);
     setErrors({ name: "", email: "" });
     setIsBooking(false);
     setIsBooked(false);
     setBookingDetails(null);
+  };
+
+  const nextImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (selectedTour && selectedTour.images) {
+      setCurrentImageIndex((prev) => (prev + 1) % selectedTour.images.length);
+    }
+  };
+
+  const prevImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (selectedTour && selectedTour.images) {
+      setCurrentImageIndex((prev) => (prev - 1 + selectedTour.images.length) % selectedTour.images.length);
+    }
   };
 
   const handleBooking = (e: React.FormEvent<HTMLFormElement>) => {
@@ -161,7 +177,7 @@ export default function Tours() {
                 <TourCard 
                   key={tour.id} 
                   tour={tour} 
-                  onClick={() => setSelectedTour(tour)} 
+                  onClick={() => { setSelectedTour(tour); setCurrentImageIndex(0); }} 
                   isWishlisted={wishlist.includes(tour.id)}
                   onToggleWishlist={(e) => {
                     e.stopPropagation();
@@ -205,12 +221,51 @@ export default function Tours() {
               </button>
               
               <div className="overflow-y-auto pr-2 -mr-2">
-                <img
-                  src={selectedTour.image}
-                  alt={selectedTour.title}
-                  className="w-full h-64 object-cover rounded-2xl mb-6"
-                  referrerPolicy="no-referrer"
-                />
+                <div className="relative w-full h-64 rounded-2xl mb-6 overflow-hidden group">
+                  <AnimatePresence mode="wait">
+                    <motion.img
+                      key={currentImageIndex}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      src={selectedTour.images ? selectedTour.images[currentImageIndex] : selectedTour.image}
+                      alt={`${selectedTour.title} - ${currentImageIndex + 1}`}
+                      className="w-full h-full object-cover absolute inset-0"
+                      referrerPolicy="no-referrer"
+                    />
+                  </AnimatePresence>
+                  
+                  {selectedTour.images && selectedTour.images.length > 1 && (
+                    <>
+                      <button
+                        onClick={prevImage}
+                        className="absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/80"
+                        aria-label="Previous image"
+                      >
+                        <ChevronLeft className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={nextImage}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/80"
+                        aria-label="Next image"
+                      >
+                        <ChevronRight className="w-5 h-5" />
+                      </button>
+                      
+                      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                        {selectedTour.images.map((_, idx) => (
+                          <div
+                            key={idx}
+                            className={`h-1.5 rounded-full transition-all ${
+                              idx === currentImageIndex ? "w-4 bg-white" : "w-1.5 bg-white/50"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
                 
                 <h2 id="modal-title" className="text-3xl font-serif font-bold text-white mb-4">{selectedTour.title}</h2>
                 <p id="modal-description" className="text-zinc-400 mb-6">
