@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useRef, useEffect } from "react";
-import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
+import React, { useState, useMemo, useEffect } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { Star, Clock, MapPin, ArrowRight, X, CheckCircle, Heart, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { tours } from "@/src/data/travelData";
 import { Button } from "@/components/ui/button";
@@ -36,6 +36,22 @@ export default function Tours() {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!selectedTour || !selectedTour.images || selectedTour.images.length <= 1) return;
+      if (e.key === "ArrowLeft") {
+        setCurrentImageIndex((prev) => (prev - 1 + selectedTour.images!.length) % selectedTour.images!.length);
+      } else if (e.key === "ArrowRight") {
+        setCurrentImageIndex((prev) => (prev + 1) % selectedTour.images!.length);
+      }
+    };
+
+    if (isExpanded || selectedTour) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedTour, isExpanded]);
+
   const toggleWishlist = (id: number) => {
     setWishlist(prev => prev.includes(id) ? prev.filter(tid => tid !== id) : [...prev, id]);
   };
@@ -56,11 +72,16 @@ export default function Tours() {
     return tours.filter((tour) => tour.tags.includes(activeTag));
   }, [activeTag, wishlist]);
 
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+
   const closeModal = () => {
     setSelectedTour(null);
     setIsExpanded(false);
     setCurrentImageIndex(0);
     setErrors({ name: "", email: "" });
+    setName("");
+    setEmail("");
     setIsBooking(false);
     setIsBooked(false);
     setBookingDetails(null);
@@ -82,19 +103,19 @@ export default function Tours() {
 
   const handleBooking = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const name = formData.get("name") as string;
-    const email = formData.get("email") as string;
     
     let hasError = false;
     const newErrors = { name: "", email: "" };
 
     if (!name.trim()) {
-      newErrors.name = "Name is required";
+      newErrors.name = "Name is required.";
       hasError = true;
     }
-    if (!email.trim() || !/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = "Valid email is required";
+    if (!email.trim()) {
+      newErrors.email = "Email is required.";
+      hasError = true;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = "Please enter a valid email address.";
       hasError = true;
     }
 
@@ -366,11 +387,37 @@ export default function Tours() {
                       <p className="text-zinc-400 text-sm mt-4">A confirmation has been sent to your email.</p>
                     </motion.div>
                   ) : (
-                    <form className="space-y-4" onSubmit={handleBooking}>
-                      <input name="name" type="text" placeholder="Your Name" aria-label="Your Name" className="w-full bg-black border border-white/10 rounded-xl p-3 text-white" />
-                      {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
-                      <input name="email" type="email" placeholder="Your Email" aria-label="Your Email" className="w-full bg-black border border-white/10 rounded-xl p-3 text-white" />
-                      {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+                    <form className="space-y-4" onSubmit={handleBooking} noValidate>
+                      <div>
+                        <input 
+                          name="name" 
+                          type="text" 
+                          value={name}
+                          onChange={(e) => {
+                            setName(e.target.value);
+                            if (errors.name) setErrors({...errors, name: ""});
+                          }}
+                          placeholder="Your Name" 
+                          aria-label="Your Name" 
+                          className={`w-full bg-black border ${errors.name ? 'border-red-500' : 'border-white/10'} rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-white`} 
+                        />
+                        {errors.name && <p className="text-red-500 text-xs mt-1 ml-1">{errors.name}</p>}
+                      </div>
+                      <div>
+                        <input 
+                          name="email" 
+                          type="email" 
+                          value={email}
+                          onChange={(e) => {
+                            setEmail(e.target.value);
+                            if (errors.email) setErrors({...errors, email: ""});
+                          }}
+                          placeholder="Your Email" 
+                          aria-label="Your Email" 
+                          className={`w-full bg-black border ${errors.email ? 'border-red-500' : 'border-white/10'} rounded-xl p-3 text-white focus:outline-none focus:ring-1 focus:ring-white`} 
+                        />
+                        {errors.email && <p className="text-red-500 text-xs mt-1 ml-1">{errors.email}</p>}
+                      </div>
                       <Button type="submit" disabled={isBooking} className="w-full bg-white text-black hover:bg-white/90">
                         {isBooking ? (
                           <>
@@ -402,16 +449,9 @@ interface TourCardProps {
 
 const TourCard: React.FC<TourCardProps> = ({ tour, onClick, isWishlisted, onToggleWishlist }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: cardRef,
-    offset: ["start end", "end start"],
-  });
-  const y = useTransform(scrollYProgress, [0, 1], ["-10%", "10%"]);
 
   return (
     <motion.div
-      ref={cardRef}
       layout
       initial={{ opacity: 0, scale: 0.95 }}
       whileInView={{ opacity: 1, scale: 1 }}
@@ -442,10 +482,9 @@ const TourCard: React.FC<TourCardProps> = ({ tour, onClick, isWishlisted, onTogg
             <motion.img
               key="image"
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1, scale: isHovered ? 1.25 : 1.2 }}
+              animate={{ opacity: 1, scale: isHovered ? 1.1 : 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.7, ease: "easeOut" }}
-              style={{ y }}
               src={tour.image}
               alt={tour.title}
               className="w-full h-full object-cover"
