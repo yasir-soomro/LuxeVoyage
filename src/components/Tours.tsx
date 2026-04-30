@@ -349,14 +349,16 @@ export default function Tours() {
                     <h4 className="text-white font-bold mb-4 text-lg">Traveler Reviews</h4>
                     <div className="space-y-4">
                       {selectedTour.reviews.map((review, idx) => (
-                        <div key={idx} className="bg-black/50 p-4 rounded-xl">
-                          <div className="flex items-center gap-1 mb-2">
-                            {[...Array(review.rating)].map((_, i) => (
-                              <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                            ))}
+                        <div key={idx} className="bg-black/40 border border-white/5 p-5 rounded-2xl">
+                          <div className="flex items-center justify-between mb-3">
+                            <span className="text-white font-medium">{review.author}</span>
+                            <div className="flex items-center gap-0.5">
+                              {[...Array(review.rating)].map((_, i) => (
+                                <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                              ))}
+                            </div>
                           </div>
-                          <p className="text-zinc-300 text-sm mb-2">{review.text}</p>
-                          <p className="text-zinc-500 text-xs font-medium">— {review.author}</p>
+                          <p className="text-zinc-400 text-sm leading-relaxed italic">"{review.text}"</p>
                         </div>
                       ))}
                     </div>
