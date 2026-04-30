@@ -7,7 +7,9 @@ import { Badge } from "@/components/ui/badge";
 
 export default function Tours() {
   const [activeTag, setActiveTag] = useState("All");
+  const [sortOrder, setSortOrder] = useState<"def" | "asc" | "desc">("def");
   const [selectedTour, setSelectedTour] = useState<null | typeof tours[0]>(null);
+
   const [isBooked, setIsBooked] = useState(false);
   const [isBooking, setIsBooking] = useState(false);
   const [isLoadingTours, setIsLoadingTours] = useState(true);
@@ -67,10 +69,23 @@ export default function Tours() {
   }, [wishlist.length]);
 
   const filteredTours = useMemo(() => {
-    if (activeTag === "Saved") return tours.filter(tour => wishlist.includes(tour.id));
-    if (activeTag === "All") return tours;
-    return tours.filter((tour) => tour.tags.includes(activeTag));
-  }, [activeTag, wishlist]);
+    let result = tours;
+    if (activeTag === "Saved") {
+      result = tours.filter(tour => wishlist.includes(tour.id));
+    } else if (activeTag !== "All") {
+      result = tours.filter((tour) => tour.tags.includes(activeTag));
+    }
+
+    result = [...result];
+
+    if (sortOrder === "asc") {
+      result.sort((a, b) => a.price - b.price);
+    } else if (sortOrder === "desc") {
+      result.sort((a, b) => b.price - a.price);
+    }
+
+    return result;
+  }, [activeTag, wishlist, sortOrder]);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -165,21 +180,37 @@ export default function Tours() {
           </h2>
         </div>
 
-        {/* Filter Buttons */}
-        <div className="flex flex-wrap justify-center gap-3 mb-16">
-          {allTags.map((tag) => (
-            <button
-              key={tag}
-              onClick={() => setActiveTag(tag)}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                activeTag === tag
-                  ? "bg-white text-black"
-                  : "bg-zinc-900 text-zinc-400 hover:bg-zinc-800 hover:text-white"
-              }`}
+        {/* Filters and Sort */}
+        <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-16">
+          <div className="flex flex-wrap justify-center md:justify-start gap-3">
+            {allTags.map((tag) => (
+              <button
+                key={tag}
+                onClick={() => setActiveTag(tag)}
+                className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                  activeTag === tag
+                    ? "bg-white text-black"
+                    : "bg-zinc-900 text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                }`}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-3">
+            <span className="text-zinc-500 text-sm font-medium">Sort by:</span>
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value as any)}
+              className="bg-zinc-900 border border-white/10 text-white text-sm rounded-full px-4 py-2 cursor-pointer focus:outline-none focus:ring-1 focus:ring-white transition-colors hover:bg-zinc-800"
+              aria-label="Sort tours by price"
             >
-              {tag}
-            </button>
-          ))}
+              <option value="def">Recommended</option>
+              <option value="asc">Price: Low to High</option>
+              <option value="desc">Price: High to Low</option>
+            </select>
+          </div>
         </div>
 
         <motion.div 
