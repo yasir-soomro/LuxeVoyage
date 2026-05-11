@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Star, Clock, MapPin, ArrowRight, X, CheckCircle, Heart, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { tours } from "@/src/data/travelData";
@@ -182,6 +182,20 @@ const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlis
   const [isHovered, setIsHovered] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isExpanded && cardRef.current) {
+      setTimeout(() => {
+        const yOffset = -32;
+        const element = cardRef.current;
+        if (element) {
+          const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+      }, 150);
+    }
+  }, [isExpanded]);
 
   // Booking state
   const [name, setName] = useState("");
@@ -262,6 +276,7 @@ const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlis
 
   return (
     <motion.div
+      ref={cardRef}
       layout
       initial={{ opacity: 0, scale: 0.95 }}
       whileInView={{ opacity: 1, scale: 1 }}
@@ -434,8 +449,8 @@ const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlis
                       <h4 className="text-xl font-bold text-white mb-4">What's Included</h4>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {tour.included.map((item, idx) => (
-                          <div key={idx} className="flex items-center gap-3 text-zinc-300 text-sm bg-black/30 p-4 rounded-xl border border-white/5">
-                            <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                          <div key={idx} className="flex items-center gap-3 text-zinc-300 text-sm bg-black/30 hover:bg-zinc-900/80 transition-colors p-4 rounded-xl border border-white/5 hover:border-white/10 group">
+                            <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 group-hover:scale-110 transition-transform" />
                             <span>{item}</span>
                           </div>
                         ))}
