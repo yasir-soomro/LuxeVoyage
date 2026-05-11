@@ -1,9 +1,54 @@
+export const appData = {
+  hero: {
+    badge: "Beyond the Ordinary",
+    title: "The World,",
+    italicTitle: "Refined.",
+    backgroundImage: "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&q=80&w=2000"
+  },
+  navbar: {
+    logo: "LuxeVoyage",
+    links: [
+      { name: "Destinations", href: "#destinations" },
+      { name: "Tours", href: "#tours" },
+      { name: "About", href: "#about" },
+      { name: "Contact", href: "#contact" },
+    ]
+  },
+  footer: {
+    description: "Crafting extraordinary journeys for the discerning traveler. Explore the world with elegance and ease.",
+    companyLinks: [
+      { name: "About Us", href: "#" },
+      { name: "Careers", href: "#" },
+      { name: "Press", href: "#" },
+      { name: "Blog", href: "#" },
+    ],
+    supportLinks: [
+      { name: "Help Center", href: "#" },
+      { name: "Safety Information", href: "#" },
+      { name: "Cancellation Options", href: "#" },
+      { name: "Our COVID-19 Response", href: "#" },
+    ],
+    socialLinks: [
+      { name: "Instagram", url: "#" },
+      { name: "Twitter", url: "#" },
+      { name: "Facebook", url: "#" },
+      { name: "Youtube", url: "#" },
+    ],
+    legalLinks: [
+      { name: "Privacy Policy", href: "#" },
+      { name: "Terms of Service", href: "#" },
+      { name: "Cookie Policy", href: "#" },
+    ],
+    copyright: "© 2024 LuxeVoyage. All rights reserved."
+  }
+};
+
 export const destinations = [
   {
     id: 1,
     name: "Amalfi Coast",
     country: "Italy",
-    image: "https://images.unsplash.com/photo-1533929736458-ca588d08c8be?auto=format&fit=crop&q=80&w=1000",
+    image: "https://images.unsplash.com/photo-1612698093158-e07ac200d44e?auto=format&fit=crop&q=80&w=1000",
     description: "Dramatic cliffs and turquoise waters meet colorful villages.",
     category: "Coastal"
   },
@@ -11,7 +56,7 @@ export const destinations = [
     id: 2,
     name: "Kyoto",
     country: "Japan",
-    image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&q=80&w=1000",
+    image: "https://images.unsplash.com/photo-1624253321171-1be53e12f5f4?auto=format&fit=crop&q=80&w=1000",
     description: "Ancient temples, traditional tea houses, and serene gardens.",
     category: "Cultural"
   },
@@ -19,7 +64,7 @@ export const destinations = [
     id: 3,
     name: "Santorini",
     country: "Greece",
-    image: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&q=80&w=1000",
+    image: "https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?auto=format&fit=crop&q=80&w=1000",
     description: "Iconic blue-domed churches overlooking the Aegean Sea.",
     category: "Coastal"
   },
@@ -27,7 +72,7 @@ export const destinations = [
     id: 4,
     name: "Swiss Alps",
     country: "Switzerland",
-    image: "https://images.unsplash.com/photo-1531210483974-4f8c1f33fd35?auto=format&fit=crop&q=80&w=1000",
+    image: "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&q=80&w=1000",
     description: "Majestic snow-capped peaks and pristine mountain lakes.",
     category: "Adventure"
   }
@@ -41,12 +86,12 @@ export const tours = [
     price: 2499,
     duration: "8 Days",
     rating: 4.9,
-    image: "https://images.unsplash.com/photo-1523528283115-9bf9b1aa992a?auto=format&fit=crop&q=80&w=1000",
+    image: "https://images.unsplash.com/photo-1464013778555-8e723c2f01f8?auto=format&fit=crop&q=80&w=1000",
     video: "https://www.w3schools.com/html/mov_bbb.mp4",
     images: [
-      "https://images.unsplash.com/photo-1523528283115-9bf9b1aa992a?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1516483638261-f40af5eb2756?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1498503182468-3b51cbb6cb24?auto=format&fit=crop&q=80&w=1000"
+      "https://images.unsplash.com/photo-1464013778555-8e723c2f01f8?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1504675099198-7023dd85f5a3?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1559564484-e48b3e040ff4?auto=format&fit=crop&q=80&w=1000"
     ],
     tags: ["Luxury", "Culinary"],
     description: "Experience the heart of Italy with private vineyard tours, exclusive cooking classes with local chefs, and stays in historic villas.",
@@ -72,8 +117,8 @@ export const tours = [
     video: "https://www.w3schools.com/html/movie.mp4",
     images: [
       "https://images.unsplash.com/photo-1531366930499-41f6693d15dc?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1476610182048-b716b8518aae?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1504829857797-cb23428c946e?auto=format&fit=crop&q=80&w=1000"
+      "https://images.unsplash.com/photo-1520769945061-0a448c463865?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1478265409131-1f65c88f965c?auto=format&fit=crop&q=80&w=1000"
     ],
     tags: ["Adventure", "Nature"],
     description: "Chase the aurora borealis across the dramatic Icelandic landscape, featuring glacier hikes and geothermal spa visits.",
@@ -99,7 +144,7 @@ export const tours = [
     video: "https://www.w3schools.com/html/mov_bbb.mp4",
     images: [
       "https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&q=80&w=1000",
-      "https://images.unsplash.com/photo-1547471080-7cb2ac647087?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1614027164847-1b28cfe1fa60?auto=format&fit=crop&q=80&w=1000",
       "https://images.unsplash.com/photo-1523805009056-963b516de0b0?auto=format&fit=crop&q=80&w=1000"
     ],
     tags: ["Wildlife", "Exclusive"],
@@ -123,13 +168,13 @@ export const testimonials = [
     name: "Elena Rodriguez",
     role: "Luxury Traveler",
     content: "LuxeVoyage curated the most incredible trip to Kyoto. Every detail was perfect, from the private tea ceremony to the hidden ryokan.",
-    avatar: "https://i.pravatar.cc/150?u=elena"
+    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150"
   },
   {
     id: 2,
     name: "James Chen",
     role: "Adventure Enthusiast",
     content: "The Swiss Alps expedition was life-changing. The guides were professional and the views were beyond words. Highly recommend!",
-    avatar: "https://i.pravatar.cc/150?u=james"
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=150"
   }
 ];

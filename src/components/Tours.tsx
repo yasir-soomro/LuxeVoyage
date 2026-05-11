@@ -222,12 +222,7 @@ const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlis
   useEffect(() => {
     if (isExpanded && cardRef.current) {
       setTimeout(() => {
-        const yOffset = -32;
-        const element = cardRef.current;
-        if (element) {
-          const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
-          window.scrollTo({ top: y, behavior: 'smooth' });
-        }
+        cardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 150);
     }
   }, [isExpanded]);
@@ -374,7 +369,7 @@ const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlis
       onClick={() => { if (!isExpanded) setIsExpanded(true); }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`group bg-zinc-900 rounded-3xl overflow-hidden border border-white/10 hover:shadow-2xl hover:shadow-white/10 transition-shadow duration-500 ${!isExpanded ? 'cursor-pointer' : ''} ${isExpanded ? 'md:col-span-2 lg:col-span-3' : ''}`}
+      className={`group bg-zinc-900 rounded-3xl overflow-hidden border border-white/10 hover:shadow-2xl hover:shadow-white/10 transition-shadow duration-500 scroll-mt-32 ${!isExpanded ? 'cursor-pointer' : ''} ${isExpanded ? 'md:col-span-2 lg:col-span-3' : ''}`}
     >
       <div className={`relative ${isExpanded ? 'h-64 sm:h-80 md:h-96 w-full' : 'aspect-[16/10]'} overflow-hidden`}>
         <AnimatePresence mode="wait">
@@ -569,7 +564,7 @@ const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlis
                   )}
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-6 lg:sticky lg:top-32 self-start">
                   <div className="bg-black/50 p-6 sm:p-8 rounded-2xl border border-white/5">
                     <h4 className="text-xl font-bold text-white mb-6">Book This Tour</h4>
                     {isBooked ? (
