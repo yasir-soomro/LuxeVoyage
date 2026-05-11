@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Star, Clock, MapPin, ArrowRight, X, CheckCircle, Heart, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Star, Clock, MapPin, ArrowRight, ArrowUp, X, CheckCircle, Heart, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { tours } from "@/src/data/travelData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +9,26 @@ export default function Tours() {
   const [activeTag, setActiveTag] = useState("All");
   const [sortOrder, setSortOrder] = useState<"def" | "asc" | "desc">("def");
   const [isLoadingTours, setIsLoadingTours] = useState(true);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 500) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    const section = document.getElementById("tours");
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   const [wishlist, setWishlist] = useState<number[]>(() => {
     try {
@@ -168,6 +188,21 @@ export default function Tours() {
           )}
         </motion.div>
       </div>
+
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            onClick={scrollToTop}
+            className="fixed bottom-8 right-8 p-4 bg-white text-black rounded-full shadow-2xl hover:bg-zinc-200 transition-colors z-50 group"
+            aria-label="Scroll to top of tours"
+          >
+            <ArrowUp className="w-6 h-6 group-hover:-translate-y-1 transition-transform" />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
@@ -204,6 +239,58 @@ const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlis
   const [isBooked, setIsBooked] = useState(false);
   const [errors, setErrors] = useState({ name: "", email: "" });
   const [bookingDetails, setBookingDetails] = useState<{id: string, name: string, email: string, tourTitle: string} | null>(null);
+
+  // Wishlist animation state
+  const [isWishlistAnimating, setIsWishlistAnimating] = useState(false);
+  const [showWishlistToast, setShowWishlistToast] = useState(false);
+
+  // Reviews state
+  const [newReviewText, setNewReviewText] = useState("");
+  const [newReviewAuthor, setNewReviewAuthor] = useState("");
+  const [newReviewRating, setNewReviewRating] = useState(5);
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [addedReviews, setAddedReviews] = useState<{author: string, text: string, rating: number}[]>(() => {
+    try {
+      const saved = localStorage.getItem(`luxevoyage_reviews_${tour.id}`);
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const handleToggleWishlist = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onToggleWishlist(e);
+    setIsWishlistAnimating(true);
+    if (!isWishlisted) {
+      setShowWishlistToast(true);
+      setTimeout(() => setShowWishlistToast(false), 2000);
+    }
+    setTimeout(() => setIsWishlistAnimating(false), 300);
+  };
+
+  const handleReviewSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!newReviewText.trim() || !newReviewAuthor.trim()) return;
+    
+    setIsSubmittingReview(true);
+    setTimeout(() => {
+      const newReview = { 
+        author: newReviewAuthor, 
+        text: newReviewText, 
+        rating: newReviewRating 
+      };
+      const updatedReviews = [newReview, ...addedReviews];
+      setAddedReviews(updatedReviews);
+      localStorage.setItem(`luxevoyage_reviews_${tour.id}`, JSON.stringify(updatedReviews));
+      
+      setNewReviewText("");
+      setNewReviewAuthor("");
+      setNewReviewRating(5);
+      setIsSubmittingReview(false);
+    }, 800);
+  };
 
   const nextImage = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -334,17 +421,6 @@ const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlis
             >
               <ChevronRight className="w-5 h-5" />
             </button>
-            
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-              {tour.images.map((_, idx) => (
-                <div
-                  key={idx}
-                  className={`h-1.5 rounded-full transition-all ${
-                    idx === currentImageIndex ? "w-5 bg-white" : "w-1.5 bg-white/50"
-                  }`}
-                />
-              ))}
-            </div>
           </>
         )}
 
@@ -355,23 +431,42 @@ const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlis
             </Badge>
           ))}
         </div>
-        <div className="absolute top-4 right-4 flex gap-2 z-10">
-          <button
-            onClick={onToggleWishlist}
-            className="p-2.5 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors backdrop-blur-sm"
-            aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-          >
-            <Heart className={`w-5 h-5 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-white'}`} />
-          </button>
-          {isExpanded && (
+        <div className="absolute top-4 right-4 flex flex-col items-end gap-2 z-20">
+          <div className="flex gap-2">
             <button
-              onClick={(e) => { e.stopPropagation(); setIsExpanded(false); }}
-              className="p-2.5 rounded-full bg-black/50 text-white hover:bg-red-500/80 transition-colors backdrop-blur-sm"
-              aria-label="Close details"
+              onClick={handleToggleWishlist}
+              className="p-2.5 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors backdrop-blur-sm relative"
+              aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
             >
-              <X className="w-5 h-5" />
+              <motion.div
+                animate={isWishlistAnimating ? { scale: [1, 1.4, 1] } : { scale: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Heart className={`w-5 h-5 transition-colors ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-white'}`} />
+              </motion.div>
             </button>
-          )}
+            {isExpanded && (
+              <button
+                onClick={(e) => { e.stopPropagation(); setIsExpanded(false); }}
+                className="p-2.5 rounded-full bg-black/50 text-white hover:bg-red-500/80 transition-colors backdrop-blur-sm"
+                aria-label="Close details"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
+          </div>
+          <AnimatePresence>
+            {showWishlistToast && (
+              <motion.div
+                initial={{ opacity: 0, y: -10, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.9 }}
+                className="bg-black/80 backdrop-blur-md text-white text-xs font-medium px-3 py-1.5 rounded-lg whitespace-nowrap border border-white/10"
+              >
+                Saved to Wishlist!
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
         {!isExpanded && (
           <div className="absolute bottom-4 right-4 bg-black/90 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-1 text-sm font-bold text-white z-10">
@@ -416,6 +511,21 @@ const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlis
               exit={{ opacity: 0, height: 0 }}
               className="overflow-hidden"
             >
+              {tour.images && tour.images.length > 1 && (
+                <div className="flex gap-3 pb-6 overflow-x-auto snap-x [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                  {tour.images.map((img, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(idx); }}
+                      className={`relative flex-shrink-0 w-24 sm:w-32 aspect-[16/10] rounded-xl overflow-hidden border-2 transition-all snap-start focus:outline-none focus:ring-2 focus:ring-white/50 ${idx === currentImageIndex ? 'border-white opacity-100 shadow-[0_0_15px_rgba(255,255,255,0.2)]' : 'border-transparent opacity-50 hover:opacity-100'}`}
+                      aria-label={`View image ${idx + 1}`}
+                    >
+                      <img src={img} alt={`${tour.title} thumbnail ${idx + 1}`} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                    </button>
+                  ))}
+                </div>
+              )}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pt-6 border-t border-white/10">
                 <div className="lg:col-span-2 space-y-8">
                   <div>
@@ -527,11 +637,11 @@ const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlis
                     )}
                   </div>
 
-                  {tour.reviews && tour.reviews.length > 0 && (
+                  {((tour.reviews && tour.reviews.length > 0) || addedReviews.length > 0) && (
                     <div className="pt-2">
                       <h4 className="text-lg font-bold text-white mb-4">Traveler Reviews</h4>
                       <div className="space-y-3">
-                        {tour.reviews.slice(0, 3).map((review, idx) => (
+                        {[...addedReviews, ...(tour.reviews || [])].slice(0, Math.max(3, addedReviews.length)).map((review, idx) => (
                           <div key={idx} className="bg-black/30 border border-white/5 p-5 rounded-2xl">
                             <div className="flex items-center justify-between mb-3">
                               <span className="text-white text-sm font-medium">{review.author}</span>
@@ -544,6 +654,46 @@ const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlis
                             <p className="text-zinc-400 text-sm leading-relaxed italic">"{review.text}"</p>
                           </div>
                         ))}
+                      </div>
+
+                      <div className="bg-zinc-800/30 p-5 rounded-2xl border border-white/5 mt-4 mb-2">
+                        <h5 className="text-white font-medium mb-3 text-sm">Write a Review</h5>
+                        <form onSubmit={handleReviewSubmit} onClick={(e) => e.stopPropagation()} className="space-y-3">
+                          <div className="flex items-center gap-2 mb-2">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <button
+                                key={star}
+                                type="button"
+                                onClick={() => setNewReviewRating(star)}
+                                className="focus:outline-none"
+                              >
+                                <Star className={`w-5 h-5 transition-colors ${star <= newReviewRating ? 'fill-yellow-400 text-yellow-400' : 'text-zinc-600'}`} />
+                              </button>
+                            ))}
+                          </div>
+                          <input
+                            type="text"
+                            placeholder="Your Name"
+                            value={newReviewAuthor}
+                            onChange={(e) => setNewReviewAuthor(e.target.value)}
+                            className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-white/30"
+                            required
+                          />
+                          <textarea
+                            placeholder="Share your experience..."
+                            value={newReviewText}
+                            onChange={(e) => setNewReviewText(e.target.value)}
+                            className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-white/30 h-24 resize-none"
+                            required
+                          />
+                          <Button 
+                            type="submit" 
+                            disabled={isSubmittingReview || !newReviewText.trim() || !newReviewAuthor.trim()} 
+                            className="w-full bg-white/10 hover:bg-white/20 text-white rounded-xl h-10 text-sm"
+                          >
+                            {isSubmittingReview ? <Loader2 className="w-4 h-4 animate-spin" /> : "Submit Review"}
+                          </Button>
+                        </form>
                       </div>
                     </div>
                   )}
