@@ -37,18 +37,16 @@ export default function Tours() {
   const allTags = useMemo(() => {
     const tags = new Set<string>();
     tours.forEach((tour) => tour.tags.forEach((tag) => tags.add(tag)));
-    const baseTags = ["All", ...Array.from(tags)];
-    if (wishlist.length > 0) {
-      baseTags.push("Saved");
-    }
-    return baseTags;
-  }, [wishlist.length]);
+    return ["All", ...Array.from(tags)];
+  }, []);
+
+  const savedTours = useMemo(() => {
+    return tours.filter(tour => wishlist.includes(tour.id));
+  }, [wishlist]);
 
   const filteredTours = useMemo(() => {
     let result = tours;
-    if (activeTag === "Saved") {
-      result = tours.filter(tour => wishlist.includes(tour.id));
-    } else if (activeTag !== "All") {
+    if (activeTag !== "All") {
       result = tours.filter((tour) => tour.tags.includes(activeTag));
     }
 
@@ -74,6 +72,41 @@ export default function Tours() {
             Featured Tour Packages
           </h2>
         </div>
+
+        {savedTours.length > 0 && (
+          <div className="mb-24">
+            <div className="flex items-center gap-4 mb-8">
+              <Heart className="w-8 h-8 text-red-500 fill-red-500" />
+              <h3 className="text-3xl font-serif font-bold text-white">Your Saved Tours</h3>
+            </div>
+            
+            <motion.div 
+              layout
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 items-start"
+            >
+              <AnimatePresence mode="popLayout">
+                {savedTours.map((tour) => (
+                  <TourCard 
+                    key={`saved-${tour.id}`} 
+                    tour={tour} 
+                    isWishlisted={true}
+                    onToggleWishlist={(e) => {
+                      e.stopPropagation();
+                      toggleWishlist(tour.id);
+                    }}
+                  />
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          </div>
+        )}
+
+        {savedTours.length > 0 && (
+          <div className="flex items-center gap-6 mb-12">
+            <h3 className="text-3xl font-serif font-bold text-white whitespace-nowrap">Discover More</h3>
+            <div className="h-px bg-white/10 w-full" />
+          </div>
+        )}
 
         {/* Filters and Sort */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-16">
