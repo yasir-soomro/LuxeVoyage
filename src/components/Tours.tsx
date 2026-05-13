@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Star, Clock, MapPin, ArrowRight, ArrowUp, X, CheckCircle, Heart, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Star, Clock, MapPin, ArrowRight, ArrowUp, X, CheckCircle, Heart, Loader2, ChevronLeft, ChevronRight, Share2, Check } from "lucide-react";
 import { tours } from "@/src/data/travelData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -239,6 +239,23 @@ const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlis
   const [isWishlistAnimating, setIsWishlistAnimating] = useState(false);
   const [showWishlistToast, setShowWishlistToast] = useState(false);
 
+  // Share state
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleShare = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      // Create a URL for this specific tour (you could also use a router if one exists, 
+      // but modifying the hash or just appending a query works as a unique link)
+      const url = `${window.location.origin}${window.location.pathname}?tour=${tour.id}#tours`;
+      await navigator.clipboard.writeText(url);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy link", err);
+    }
+  };
+
   // Reviews state
   const [newReviewText, setNewReviewText] = useState("");
   const [newReviewAuthor, setNewReviewAuthor] = useState("");
@@ -428,6 +445,33 @@ const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlis
         </div>
         <div className="absolute top-4 right-4 flex flex-col items-end gap-2 z-20">
           <div className="flex gap-2">
+            <button
+              onClick={handleShare}
+              className="p-2.5 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors backdrop-blur-sm relative"
+              aria-label="Share tour"
+            >
+              <AnimatePresence mode="wait">
+                {isCopied ? (
+                  <motion.div
+                    key="check"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                  >
+                    <Check className="w-5 h-5 text-green-400" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="share"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                  >
+                    <Share2 className="w-5 h-5 text-white" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </button>
             <button
               onClick={handleToggleWishlist}
               className="p-2.5 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors backdrop-blur-sm relative"
