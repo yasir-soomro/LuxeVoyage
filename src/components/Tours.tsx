@@ -369,9 +369,9 @@ const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlis
       onClick={() => { if (!isExpanded) setIsExpanded(true); }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`group bg-zinc-900 rounded-3xl overflow-hidden border border-white/10 hover:shadow-2xl hover:shadow-white/10 transition-shadow duration-500 scroll-mt-32 ${!isExpanded ? 'cursor-pointer' : ''} ${isExpanded ? 'md:col-span-2 lg:col-span-3' : ''}`}
+      className={`group bg-zinc-900 rounded-3xl border border-white/10 hover:shadow-2xl hover:shadow-white/10 transition-shadow duration-500 scroll-mt-32 ${!isExpanded ? 'cursor-pointer overflow-hidden' : 'md:col-span-2 lg:col-span-3'}`}
     >
-      <div className={`relative ${isExpanded ? 'h-64 sm:h-80 md:h-96 w-full' : 'aspect-[16/10]'} overflow-hidden`}>
+      <div className={`relative ${isExpanded ? 'h-64 sm:h-80 md:h-96 w-full rounded-t-3xl' : 'aspect-[16/10]'} overflow-hidden`}>
         <AnimatePresence mode="wait">
           {(!isExpanded && isHovered && tour.video) ? (
             <motion.video
