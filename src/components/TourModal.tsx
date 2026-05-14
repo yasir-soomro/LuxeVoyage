@@ -188,6 +188,7 @@ export default function TourModal({ tour, isWishlisted, onToggleWishlist, onClos
               alt={tour.title}
               className="w-full h-full object-cover absolute inset-0"
               referrerPolicy="no-referrer"
+              loading="lazy"
             />
           </AnimatePresence>
           
@@ -290,7 +291,7 @@ export default function TourModal({ tour, isWishlisted, onToggleWishlist, onClos
                     className={`relative flex-shrink-0 w-24 sm:w-32 aspect-[16/10] rounded-xl overflow-hidden border-2 transition-all snap-start focus:outline-none focus:ring-2 focus:ring-white/50 cursor-pointer ${idx === currentImageIndex ? 'border-white opacity-100 shadow-[0_0_15px_rgba(255,255,255,0.2)]' : 'border-transparent opacity-50 hover:opacity-100'}`}
                     aria-label={`View image ${idx + 1}`}
                   >
-                    <img src={img} alt={`${tour.title} thumbnail ${idx + 1}`} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                    <img src={img} alt={`${tour.title} thumbnail ${idx + 1}`} className="w-full h-full object-cover" referrerPolicy="no-referrer" loading="lazy" />
                   </button>
                 ))}
               </div>

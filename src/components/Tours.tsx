@@ -290,6 +290,7 @@ const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlis
                 alt={tour.title}
                 className="w-full h-full object-cover absolute inset-0"
                 referrerPolicy="no-referrer"
+                loading="lazy"
               />
             )}
           </AnimatePresence>
