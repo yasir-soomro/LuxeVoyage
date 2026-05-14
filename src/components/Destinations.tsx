@@ -16,7 +16,10 @@ export default function Destinations() {
               <span className="italic font-normal text-zinc-500">Waiting for You</span>
             </h2>
           </div>
-          <button className="flex items-center gap-2 text-white font-medium hover:opacity-70 transition-opacity focus:outline-none focus:ring-4 focus:ring-white/30 rounded-full px-4 py-2 -mx-4 group">
+          <button 
+            onClick={() => document.getElementById('tours')?.scrollIntoView({ behavior: 'smooth' })}
+            className="flex items-center gap-2 text-white font-medium hover:opacity-70 transition-opacity focus:outline-none focus:ring-4 focus:ring-white/30 rounded-full px-4 py-2 -mx-4 group"
+          >
             View All Destinations <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
           </button>
         </div>
