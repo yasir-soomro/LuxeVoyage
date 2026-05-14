@@ -366,6 +366,21 @@ const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlis
             <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
             {tour.rating}
           </div>
+
+          {/* Image Caption overlay */}
+          <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end">
+            <motion.div 
+              initial={{ y: 20, opacity: 0 }}
+              animate={isHovered ? { y: 0, opacity: 1 } : { y: 20, opacity: 0 }}
+              transition={{ duration: 0.3, delay: 0.1 }}
+            >
+              <h4 className="text-white text-2xl font-serif font-bold drop-shadow-lg">{tour.title}</h4>
+              <div className="flex items-center gap-1.5 text-zinc-200 text-sm mt-2 drop-shadow-md">
+                <MapPin className="w-4 h-4" />
+                {tour.location}
+              </div>
+            </motion.div>
+          </div>
         </div>
 
         <div className="p-6 sm:p-8">
