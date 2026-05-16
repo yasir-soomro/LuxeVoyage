@@ -273,7 +273,16 @@ const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlis
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => { setIsHovered(false); setMousePos({ x: 0, y: 0 }); }}
         onMouseMove={handleMouseMove}
-        className="group bg-zinc-900 rounded-3xl border border-white/10 hover:shadow-2xl hover:shadow-white/10 transition-shadow duration-500 cursor-pointer overflow-hidden"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setIsExpanded(true);
+          }
+        }}
+        tabIndex={0}
+        role="button"
+        aria-label={`View details for ${tour.title}`}
+        className="group bg-zinc-900 rounded-3xl border border-white/10 hover:shadow-2xl hover:shadow-white/10 transition-shadow duration-500 cursor-pointer overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
       >
         <div className="relative aspect-[16/10] overflow-hidden">
           <AnimatePresence mode="wait">
@@ -321,7 +330,7 @@ const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlis
             <div className="flex gap-2">
               <button
                 onClick={handleShare}
-                className="p-2.5 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors backdrop-blur-sm relative"
+                className="p-2.5 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors backdrop-blur-sm relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                 aria-label="Share tour"
               >
                 <AnimatePresence mode="wait">
@@ -338,7 +347,7 @@ const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlis
               </button>
               <button
                 onClick={handleToggleWishlist}
-                className="p-2.5 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors backdrop-blur-sm relative"
+                className="p-2.5 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors backdrop-blur-sm relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                 aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
               >
                 <motion.div
@@ -404,11 +413,12 @@ const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlis
             </div>
           </div>
           <Button 
-            className="w-full h-12 rounded-xl bg-white text-black hover:bg-white/90 group/btn mt-2"
+            className="w-full h-12 rounded-xl bg-white text-black hover:bg-white/90 group/btn mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900"
             onClick={(e) => {
               e.stopPropagation();
               setIsExpanded(true);
             }}
+            aria-label={`View details for ${tour.title}`}
           >
             View Details
             <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover/btn:translate-x-1" />
