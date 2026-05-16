@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Star, Clock, MapPin, X, CheckCircle, Heart, Loader2, ChevronLeft, ChevronRight, Share2, Check } from "lucide-react";
 import { tours } from "@/src/data/travelData";
@@ -46,14 +46,20 @@ export default function TourModal({ tour, isWishlisted, onToggleWishlist, onClos
   const [newReviewAuthor, setNewReviewAuthor] = useState("");
   const [newReviewRating, setNewReviewRating] = useState(5);
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
-  const [addedReviews, setAddedReviews] = useState<{author: string, text: string, rating: number}[]>(() => {
+  const [addedReviews, setAddedReviews] = useState<{author: string, text: string, rating: number}[]>([]);
+  const [isMountedModal, setIsMountedModal] = useState(false);
+
+  useEffect(() => {
+    setIsMountedModal(true);
     try {
       const saved = localStorage.getItem(`luxevoyage_reviews_${tour.id}`);
-      return saved ? JSON.parse(saved) : [];
+      if (saved) {
+        setAddedReviews(JSON.parse(saved));
+      }
     } catch {
-      return [];
+      // Ignore
     }
-  });
+  }, [tour.id]);
 
   const handleWishlistClick = (e: React.MouseEvent) => {
     e.stopPropagation();

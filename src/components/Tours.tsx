@@ -31,18 +31,26 @@ export default function Tours() {
     }
   };
 
-  const [wishlist, setWishlist] = useState<number[]>(() => {
-    try {
-      const saved = localStorage.getItem('luxevoyage_wishlist');
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
+  const [wishlist, setWishlist] = useState<number[]>([]);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem('luxevoyage_wishlist', JSON.stringify(wishlist));
-  }, [wishlist]);
+    setIsMounted(true);
+    try {
+      const saved = localStorage.getItem('luxevoyage_wishlist');
+      if (saved) {
+        setWishlist(JSON.parse(saved));
+      }
+    } catch (e) {
+      // Ignore
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isMounted) {
+      localStorage.setItem('luxevoyage_wishlist', JSON.stringify(wishlist));
+    }
+  }, [wishlist, isMounted]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
