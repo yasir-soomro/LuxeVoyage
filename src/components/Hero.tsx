@@ -60,7 +60,7 @@ export default function Hero() {
                   id="location-search"
                   type="text"
                   placeholder="Where are you going?"
-                  className="bg-transparent text-white placeholder:text-white/40 border-none outline-none w-full text-sm"
+                  className="bg-transparent text-white placeholder:text-white/40 border-none outline-none w-full text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-sm"
                   aria-label="Enter destination"
                 />
               </div>
@@ -77,7 +77,7 @@ export default function Hero() {
                   id="date-search"
                   type="text"
                   placeholder="Add dates"
-                  className="bg-transparent text-white placeholder:text-white/40 border-none outline-none w-full text-sm"
+                  className="bg-transparent text-white placeholder:text-white/40 border-none outline-none w-full text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-sm"
                   aria-label="Enter travel dates"
                 />
               </div>
@@ -94,13 +94,13 @@ export default function Hero() {
                   id="travelers-search"
                   type="text"
                   placeholder="Add guests"
-                  className="bg-transparent text-white placeholder:text-white/40 border-none outline-none w-full text-sm"
+                  className="bg-transparent text-white placeholder:text-white/40 border-none outline-none w-full text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-sm"
                   aria-label="Enter number of guests"
                 />
               </div>
             </div>
 
-            <Button type="submit" className="w-full md:w-auto md:rounded-full h-12 px-8 bg-white text-black hover:bg-white/90 focus:ring-4 focus:ring-white/30 transition-shadow">
+            <Button type="submit" aria-label="Search" className="w-full md:w-auto md:rounded-full h-12 px-8 bg-white text-black hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black transition-shadow">
               <Search className="w-4 h-4 mr-2" aria-hidden="true" />
               Search
             </Button>
