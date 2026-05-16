@@ -17,16 +17,16 @@ export const appData = {
   footer: {
     description: "Crafting extraordinary journeys for the discerning traveler. Explore the world with elegance and ease.",
     companyLinks: [
-      { name: "About Us", href: "#" },
-      { name: "Careers", href: "#" },
-      { name: "Press", href: "#" },
-      { name: "Blog", href: "#" },
+      { name: "About Us", href: "#about" },
+      { name: "Careers", href: "#contact" },
+      { name: "Press", href: "#contact" },
+      { name: "Blog", href: "#destinations" },
     ],
     supportLinks: [
-      { name: "Help Center", href: "#" },
-      { name: "Safety Information", href: "#" },
-      { name: "Cancellation Options", href: "#" },
-      { name: "Our COVID-19 Response", href: "#" },
+      { name: "Help Center", href: "#contact" },
+      { name: "Safety Information", href: "#about" },
+      { name: "Cancellation Options", href: "#contact" },
+      { name: "Our COVID-19 Response", href: "#about" },
     ],
     socialLinks: [
       { name: "Instagram", url: "#" },
@@ -35,9 +35,9 @@ export const appData = {
       { name: "Youtube", url: "#" },
     ],
     legalLinks: [
-      { name: "Privacy Policy", href: "#" },
-      { name: "Terms of Service", href: "#" },
-      { name: "Cookie Policy", href: "#" },
+      { name: "Privacy Policy", href: "#contact" },
+      { name: "Terms of Service", href: "#contact" },
+      { name: "Cookie Policy", href: "#contact" },
     ],
     copyright: "© 2024 LuxeVoyage. All rights reserved."
   }

@@ -4,7 +4,7 @@ import { testimonials } from "@/src/data/travelData";
 
 export default function Testimonials() {
   return (
-    <section className="py-24 bg-zinc-900 text-white overflow-hidden" aria-labelledby="testimonials-heading">
+    <section id="about" className="py-24 bg-zinc-900 text-white overflow-hidden" aria-labelledby="testimonials-heading">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex flex-col lg:flex-row gap-20 items-center">
           <div className="lg:w-1/3">

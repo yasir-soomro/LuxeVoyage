@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Menu, X, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { appData } from "@/src/data/travelData";
+import Link from 'next/link';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -50,12 +51,14 @@ export default function Navbar() {
         }`}
         aria-label="Main Navigation"
       >
-        <motion.a 
-          href="/"
+        <motion.div 
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           className="flex items-center gap-2 group cursor-pointer focus:outline-none focus:ring-2 focus:ring-white/50 rounded-full pr-2"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           aria-label="LuxeVoyage Home"
+          role="button"
+          tabIndex={0}
         >
           <div className="bg-white p-1.5 rounded-full text-black">
             <Globe className="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" strokeWidth={2} aria-hidden="true" />
@@ -63,7 +66,7 @@ export default function Navbar() {
           <span className="text-xl font-serif font-bold tracking-tight text-white group-hover:text-zinc-200 transition-colors">
             {appData.navbar.logo}
           </span>
-        </motion.a>
+        </motion.div>
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-6">

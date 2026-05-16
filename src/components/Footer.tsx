@@ -3,7 +3,7 @@ import { appData } from "@/src/data/travelData";
 
 export default function Footer() {
   return (
-    <footer className="bg-black pt-24 pb-12 border-t border-white/10" role="contentinfo">
+    <footer id="contact" className="bg-black pt-24 pb-12 border-t border-white/10" role="contentinfo">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
           <div className="lg:col-span-1">
