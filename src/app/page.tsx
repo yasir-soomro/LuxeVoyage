@@ -1,7 +1,4 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
+'use client';
 
 import Navbar from "@/src/components/Navbar";
 import Hero from "@/src/components/Hero";
@@ -10,9 +7,9 @@ import Tours from "@/src/components/Tours";
 import Testimonials from "@/src/components/Testimonials";
 import Footer from "@/src/components/Footer";
 
-export default function App() {
+export default function Home() {
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-black">
       <Navbar />
       <Hero />
       <Destinations />
