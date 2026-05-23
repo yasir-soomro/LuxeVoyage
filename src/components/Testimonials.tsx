@@ -51,6 +51,7 @@ export default function Testimonials() {
                     alt={`${testimonial.name} profile picture`}
                     className="w-12 h-12 rounded-full object-cover border-2 border-white/20"
                     referrerPolicy="no-referrer"
+                    loading="lazy"
                   />
                   <div>
                     <h3 className="font-bold text-white text-base">{testimonial.name}</h3>

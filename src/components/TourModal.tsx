@@ -46,10 +46,12 @@ export default function TourModal({ tour, isWishlisted, onToggleWishlist, onClos
   const [newReviewAuthor, setNewReviewAuthor] = useState("");
   const [newReviewRating, setNewReviewRating] = useState(5);
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [isReviewSubmitted, setIsReviewSubmitted] = useState(false);
   const [addedReviews, setAddedReviews] = useState<{author: string, text: string, rating: number}[]>([]);
   const [isMountedModal, setIsMountedModal] = useState(false);
 
   useEffect(() => {
+    setIsReviewSubmitted(false);
     setIsMountedModal(true);
     try {
       const saved = localStorage.getItem(`luxevoyage_reviews_${tour.id}`);
@@ -88,6 +90,8 @@ export default function TourModal({ tour, isWishlisted, onToggleWishlist, onClos
       setNewReviewAuthor("");
       setNewReviewRating(5);
       setIsSubmittingReview(false);
+      setIsReviewSubmitted(true);
+      setTimeout(() => setIsReviewSubmitted(false), 2500);
     }, 800);
   };
 
@@ -418,59 +422,93 @@ export default function TourModal({ tour, isWishlisted, onToggleWishlist, onClos
                   <div className="pt-4 w-full">
                     <h4 className="text-xl font-bold text-white mb-6">Traveler Reviews</h4>
                     <div className="space-y-4">
-                      {[...addedReviews, ...(tour.reviews || [])].slice(0, Math.max(3, addedReviews.length)).map((review, idx) => (
-                        <div key={idx} className="bg-black/30 border border-white/5 p-5 rounded-2xl shadow-sm">
-                          <div className="flex items-center justify-between mb-3">
-                            <span className="text-white text-sm font-medium">{review.author}</span>
-                            <div className="flex items-center gap-0.5">
-                              {[...Array(review.rating)].map((_, i) => (
-                                <Star key={i} className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
-                              ))}
+                      <AnimatePresence initial={false}>
+                        {[...addedReviews, ...(tour.reviews || [])].slice(0, Math.max(3, addedReviews.length)).map((review, idx) => (
+                          <motion.div 
+                            key={`${tour.id}-${review.author}-${idx}`}
+                            initial={idx === 0 && addedReviews.length > 0 ? { opacity: 0, y: -20, height: 0 } : false}
+                            animate={{ opacity: 1, y: 0, height: "auto" }}
+                            className="bg-black/30 border border-white/5 p-5 rounded-2xl shadow-sm overflow-hidden"
+                          >
+                            <div className="flex items-center justify-between mb-3">
+                              <span className="text-white text-sm font-medium">{review.author}</span>
+                              <div className="flex items-center gap-0.5">
+                                {[...Array(review.rating)].map((_, i) => (
+                                  <Star key={i} className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                          <p className="text-zinc-400 text-sm leading-relaxed italic">"{review.text}"</p>
-                        </div>
-                      ))}
+                            <p className="text-zinc-400 text-sm leading-relaxed italic">"{review.text}"</p>
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
                     </div>
 
-                    <div className="bg-zinc-800/30 p-6 rounded-2xl border border-white/5 mt-6 mb-2 shadow-inner">
-                      <h5 className="text-white font-medium mb-4 text-sm">Write a Review</h5>
-                      <form onSubmit={handleReviewSubmit} onClick={(e) => e.stopPropagation()} className="space-y-4">
-                        <div className="flex items-center gap-2 mb-2">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <button
-                              key={star}
-                              type="button"
-                              onClick={() => setNewReviewRating(star)}
-                              className="focus:outline-none cursor-pointer"
-                            >
-                              <Star className={`w-5 h-5 transition-colors ${star <= newReviewRating ? 'fill-yellow-400 text-yellow-400' : 'text-zinc-600'}`} />
-                            </button>
-                          ))}
-                        </div>
-                        <input
-                          type="text"
-                          placeholder="Your Name"
-                          value={newReviewAuthor}
-                          onChange={(e) => setNewReviewAuthor(e.target.value)}
-                          className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-white/30"
-                          required
-                        />
-                        <textarea
-                          placeholder="Share your experience..."
-                          value={newReviewText}
-                          onChange={(e) => setNewReviewText(e.target.value)}
-                          className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-white/30 h-24 resize-none"
-                          required
-                        />
-                        <Button 
-                          type="submit" 
-                          disabled={isSubmittingReview || !newReviewText.trim() || !newReviewAuthor.trim()} 
-                          className="w-full bg-white/10 hover:bg-white/20 text-white rounded-xl h-12 font-medium cursor-pointer"
-                        >
-                          {isSubmittingReview ? <Loader2 className="w-4 h-4 animate-spin" /> : "Submit Review"}
-                        </Button>
-                      </form>
+                    <div className="bg-zinc-800/30 p-6 rounded-2xl border border-white/5 mt-6 mb-2 shadow-inner min-h-[200px]">
+                      <AnimatePresence mode="wait">
+                        {isReviewSubmitted ? (
+                          <motion.div
+                            key="success"
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            transition={{ duration: 0.3 }}
+                            className="flex flex-col items-center justify-center py-6 h-full text-center"
+                          >
+                            <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
+                              <Check className="w-6 h-6 text-green-500" />
+                            </div>
+                            <h5 className="text-white font-medium text-lg">Review Submitted!</h5>
+                            <p className="text-zinc-400 text-sm mt-1">Thank you for sharing your experience.</p>
+                          </motion.div>
+                        ) : (
+                          <motion.div
+                            key="form"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.3 }}
+                          >
+                            <h5 className="text-white font-medium mb-4 text-sm">Write a Review</h5>
+                            <form onSubmit={handleReviewSubmit} onClick={(e) => e.stopPropagation()} className="space-y-4">
+                              <div className="flex items-center gap-2 mb-2">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <button
+                                    key={star}
+                                    type="button"
+                                    onClick={() => setNewReviewRating(star)}
+                                    className="focus:outline-none cursor-pointer hover:scale-110 transition-transform"
+                                  >
+                                    <Star className={`w-5 h-5 transition-colors ${star <= newReviewRating ? 'fill-yellow-400 text-yellow-400' : 'text-zinc-600'}`} />
+                                  </button>
+                                ))}
+                              </div>
+                              <input
+                                type="text"
+                                placeholder="Your Name"
+                                value={newReviewAuthor}
+                                onChange={(e) => setNewReviewAuthor(e.target.value)}
+                                className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-white/30 transition-colors"
+                                required
+                              />
+                              <textarea
+                                placeholder="Share your experience..."
+                                value={newReviewText}
+                                onChange={(e) => setNewReviewText(e.target.value)}
+                                className="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-white/30 h-24 resize-none transition-colors"
+                                required
+                              />
+                              <Button 
+                                type="submit" 
+                                disabled={isSubmittingReview || !newReviewText.trim() || !newReviewAuthor.trim()} 
+                                className="w-full bg-white/10 hover:bg-white/20 text-white rounded-xl h-12 font-medium cursor-pointer transition-colors"
+                              >
+                                {isSubmittingReview ? <Loader2 className="w-4 h-4 animate-spin" /> : "Submit Review"}
+                              </Button>
+                            </form>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   </div>
                 )}
