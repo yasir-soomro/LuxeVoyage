@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
 import { destinations } from "@/src/data/travelData";
+import Image from "next/image";
 
 export default function Destinations() {
   return (
@@ -38,10 +39,11 @@ export default function Destinations() {
               aria-labelledby={`dest-title-${dest.id}`}
             >
               <div className="relative aspect-[3/4] overflow-hidden rounded-[1.5rem] mb-6 shadow-2xl shadow-black/50">
-                <img
+                <Image
                   src={dest.image}
                   alt={`Destination in ${dest.country}`}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
                   referrerPolicy="no-referrer"
                   loading="lazy"
                 />

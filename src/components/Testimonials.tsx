@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { Quote } from "lucide-react";
 import { testimonials } from "@/src/data/travelData";
+import Image from "next/image";
 
 export default function Testimonials() {
   return (
@@ -46,13 +47,16 @@ export default function Testimonials() {
                   &quot;{testimonial.content}&quot;
                 </p>
                 <div className="flex items-center gap-4">
-                  <img
-                    src={testimonial.avatar}
-                    alt={`${testimonial.name} profile picture`}
-                    className="w-12 h-12 rounded-full object-cover border-2 border-white/20"
-                    referrerPolicy="no-referrer"
-                    loading="lazy"
-                  />
+                  <div className="relative w-12 h-12 rounded-full border-2 border-white/20 overflow-hidden">
+                    <Image
+                      src={testimonial.avatar}
+                      alt={`${testimonial.name} profile picture`}
+                      fill
+                      className="object-cover"
+                      referrerPolicy="no-referrer"
+                      loading="lazy"
+                    />
+                  </div>
                   <div>
                     <h3 className="font-bold text-white text-base">{testimonial.name}</h3>
                     <p className="text-sm text-white/40">{testimonial.role}</p>

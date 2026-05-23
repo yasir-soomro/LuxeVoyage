@@ -4,8 +4,11 @@ import { Star, Clock, MapPin, ArrowRight, ArrowUp, Check, Heart, Share2 } from "
 import { tours } from "@/src/data/travelData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import TourModal from "./TourModal";
-import CompareModal from "./CompareModal";
+import dynamic from "next/dynamic";
+import Image from "next/image";
+
+const TourModal = dynamic(() => import("./TourModal"), { ssr: false });
+const CompareModal = dynamic(() => import("./CompareModal"), { ssr: false });
 
 export default function Tours() {
   const [activeTag, setActiveTag] = useState("All");
@@ -285,7 +288,7 @@ interface TourCardProps {
   isWishlisted: boolean;
   onToggleWishlist: (e: React.MouseEvent) => void;
   isCompared?: boolean;
-  onToggleCompare?: (e: React.MouseEvent) => void;
+  onToggleCompare?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   compareDisabled?: boolean;
 }
 
@@ -374,7 +377,7 @@ const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlis
                 className="w-full h-full object-cover"
               />
             ) : (
-              <motion.img
+              <motion.div
                 key="img"
                 initial={{ opacity: 0 }}
                 animate={{ 
@@ -385,12 +388,17 @@ const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlis
                 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: isHovered ? 0.2 : 0.7, ease: "easeOut" }}
-                src={tour.image}
-                alt={tour.title}
-                className="w-full h-full object-cover absolute inset-0 origin-center"
-                referrerPolicy="no-referrer"
-                loading="lazy"
-              />
+                className="absolute inset-0 origin-center"
+              >
+                <Image
+                  src={tour.image}
+                  alt={tour.title}
+                  fill
+                  className="object-cover"
+                  referrerPolicy="no-referrer"
+                  loading="lazy"
+                />
+              </motion.div>
             )}
           </AnimatePresence>
 

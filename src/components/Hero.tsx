@@ -3,6 +3,7 @@ import { Search, MapPin, Calendar, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
 import { appData } from "@/src/data/travelData";
+import Image from "next/image";
 
 export default function Hero() {
   const ref = useRef(null);
@@ -16,12 +17,14 @@ export default function Hero() {
     <section ref={ref} className="relative h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       <motion.div style={{ y }} className="absolute inset-0 z-0">
-        <img
+        <Image
           src={appData.hero.backgroundImage}
           alt="Beautiful travel destination scenery"
-          className="w-full h-full object-cover scale-105"
+          fill
+          className="object-cover scale-105"
           referrerPolicy="no-referrer"
           aria-hidden="true"
+          priority
         />
         <div className="absolute inset-0 bg-black/60" aria-hidden="true" />
       </motion.div>

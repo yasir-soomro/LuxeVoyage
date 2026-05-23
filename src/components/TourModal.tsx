@@ -4,6 +4,7 @@ import { Star, Clock, MapPin, X, CheckCircle, Heart, Loader2, ChevronLeft, Chevr
 import { tours } from "@/src/data/travelData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 
 interface TourModalProps {
   tour: typeof tours[0];
@@ -188,18 +189,23 @@ export default function TourModal({ tour, isWishlisted, onToggleWishlist, onClos
       >
         <div className="relative h-64 sm:h-80 md:h-96 w-full flex-shrink-0 bg-black">
           <AnimatePresence mode="wait">
-            <motion.img
+            <motion.div
               key={`img-modal-${currentImageIndex}`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5, ease: "easeOut" }}
-              src={tour.images ? tour.images[currentImageIndex] : tour.image}
-              alt={tour.title}
-              className="w-full h-full object-cover absolute inset-0"
-              referrerPolicy="no-referrer"
-              loading="lazy"
-            />
+              className="absolute inset-0"
+            >
+              <Image
+                src={tour.images ? tour.images[currentImageIndex] : tour.image}
+                alt={tour.title}
+                fill
+                className="object-cover"
+                referrerPolicy="no-referrer"
+                priority
+              />
+            </motion.div>
           </AnimatePresence>
           
           {tour.images && tour.images.length > 1 && (
@@ -301,7 +307,7 @@ export default function TourModal({ tour, isWishlisted, onToggleWishlist, onClos
                     className={`relative flex-shrink-0 w-24 sm:w-32 aspect-[16/10] rounded-xl overflow-hidden border-2 transition-all snap-start focus:outline-none focus:ring-2 focus:ring-white/50 cursor-pointer ${idx === currentImageIndex ? 'border-white opacity-100 shadow-[0_0_15px_rgba(255,255,255,0.2)]' : 'border-transparent opacity-50 hover:opacity-100'}`}
                     aria-label={`View image ${idx + 1}`}
                   >
-                    <img src={img} alt={`${tour.title} thumbnail ${idx + 1}`} className="w-full h-full object-cover" referrerPolicy="no-referrer" loading="lazy" />
+                    <Image src={img} alt={`${tour.title} thumbnail ${idx + 1}`} fill className="object-cover" referrerPolicy="no-referrer" loading="lazy" />
                   </button>
                 ))}
               </div>

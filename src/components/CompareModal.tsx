@@ -2,6 +2,7 @@ import React from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { X, Check } from "lucide-react";
 import { tours } from "@/src/data/travelData";
+import Image from "next/image";
 
 interface CompareModalProps {
   isOpen: boolean;
@@ -76,7 +77,7 @@ export default function CompareModal({ isOpen, onClose, compareTours, onRemove }
                           
                           {/* Image & Title */}
                           <div className="h-[160px] mb-5 rounded-xl overflow-hidden relative shadow-lg">
-                            <img src={tour.image} alt={tour.title} className="w-full h-full object-cover" />
+                            <Image src={tour.image} alt={tour.title} fill className="object-cover" referrerPolicy="no-referrer" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent p-4 flex flex-col justify-end">
                               <div className="text-white font-serif font-bold leading-tight">{tour.title}</div>
                             </div>
