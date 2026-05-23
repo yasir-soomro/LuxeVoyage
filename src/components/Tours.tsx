@@ -5,12 +5,23 @@ import { tours } from "@/src/data/travelData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import TourModal from "./TourModal";
+import CompareModal from "./CompareModal";
 
 export default function Tours() {
   const [activeTag, setActiveTag] = useState("All");
   const [sortOrder, setSortOrder] = useState<"def" | "asc" | "desc">("def");
   const [isLoadingTours, setIsLoadingTours] = useState(true);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [compareTours, setCompareTours] = useState<number[]>([]);
+  const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
+
+  const toggleCompare = (id: number) => {
+    setCompareTours(prev => {
+      if (prev.includes(id)) return prev.filter(tId => tId !== id);
+      if (prev.length >= 3) return prev; // Maximum 3 tours for comparison
+      return [...prev, id];
+    });
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -123,6 +134,12 @@ export default function Tours() {
                       e.stopPropagation();
                       toggleWishlist(tour.id);
                     }}
+                    isCompared={compareTours.includes(tour.id)}
+                    onToggleCompare={(e) => {
+                      e.stopPropagation();
+                      toggleCompare(tour.id);
+                    }}
+                    compareDisabled={compareTours.length >= 3 && !compareTours.includes(tour.id)}
                   />
                 ))}
               </AnimatePresence>
@@ -191,12 +208,59 @@ export default function Tours() {
                     e.stopPropagation();
                     toggleWishlist(tour.id);
                   }}
+                  isCompared={compareTours.includes(tour.id)}
+                  onToggleCompare={(e) => {
+                    e.stopPropagation();
+                    toggleCompare(tour.id);
+                  }}
+                  compareDisabled={compareTours.length >= 3 && !compareTours.includes(tour.id)}
                 />
               ))}
             </AnimatePresence>
           )}
         </motion.div>
       </div>
+
+      <AnimatePresence>
+        {compareTours.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 100 }}
+            className="fixed bottom-0 left-0 right-0 z-40 p-4 pointer-events-none"
+          >
+            <div className="max-w-7xl mx-auto flex justify-center">
+              <div className="bg-zinc-900/90 backdrop-blur-md border border-white/20 rounded-full py-3 px-6 shadow-2xl flex items-center gap-6 pointer-events-auto">
+                <span className="text-white text-sm font-medium">
+                  {compareTours.length} {compareTours.length === 1 ? 'tour' : 'tours'} selected
+                </span>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline" 
+                    className="border-white/20 text-white hover:bg-white/10 rounded-full px-4 h-9"
+                    onClick={() => setCompareTours([])}
+                  >
+                    Clear
+                  </Button>
+                  <Button 
+                    className="bg-white text-black hover:bg-zinc-200 rounded-full px-6 h-9 font-medium"
+                    onClick={() => setIsCompareModalOpen(true)}
+                  >
+                    Compare
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <CompareModal 
+        isOpen={isCompareModalOpen}
+        onClose={() => setIsCompareModalOpen(false)}
+        compareTours={compareTours}
+        onRemove={toggleCompare}
+      />
 
       <AnimatePresence>
         {showScrollTop && (
@@ -220,9 +284,12 @@ interface TourCardProps {
   tour: typeof tours[0];
   isWishlisted: boolean;
   onToggleWishlist: (e: React.MouseEvent) => void;
+  isCompared?: boolean;
+  onToggleCompare?: (e: React.MouseEvent) => void;
+  compareDisabled?: boolean;
 }
 
-const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlist }) => {
+const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlist, isCompared, onToggleCompare, compareDisabled }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -411,14 +478,31 @@ const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlis
             </h3>
           </div>
           
-          <div className="flex flex-wrap items-center gap-4 sm:gap-6 mb-6 text-sm sm:text-base text-zinc-400">
-            <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4" />
-              {tour.duration}
+          <div className="flex flex-wrap items-center justify-between gap-4 sm:gap-6 mb-6 text-sm sm:text-base text-zinc-400">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4" />
+                {tour.duration}
+              </div>
+              <div className="font-bold text-white">
+                From ${tour.price.toLocaleString()}
+              </div>
             </div>
-            <div className="font-bold text-white">
-              From ${tour.price.toLocaleString()}
-            </div>
+
+            <label 
+              className={`flex items-center gap-2 text-sm z-20 ${compareDisabled && !isCompared ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:text-white transition-colors'} ${isCompared ? 'text-white font-medium' : ''}`} 
+              onClick={(e) => e.stopPropagation()}
+            >
+              <input 
+                type="checkbox"
+                checked={isCompared}
+                onChange={onToggleCompare}
+                disabled={compareDisabled && !isCompared}
+                className="w-4 h-4 rounded bg-zinc-800 border-zinc-600 accent-white cursor-pointer"
+                aria-label={`Compare ${tour.title}`}
+              />
+              Compare
+            </label>
           </div>
           <Button 
             className="w-full h-12 rounded-xl bg-white text-black hover:bg-white/90 group/btn mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900"
