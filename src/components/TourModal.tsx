@@ -19,10 +19,11 @@ export default function TourModal({ tour, isWishlisted, onToggleWishlist, onClos
   // Booking state
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [travelers, setTravelers] = useState(1);
   const [isBooking, setIsBooking] = useState(false);
   const [isBooked, setIsBooked] = useState(false);
   const [errors, setErrors] = useState({ name: "", email: "" });
-  const [bookingDetails, setBookingDetails] = useState<{id: string, name: string, email: string, tourTitle: string} | null>(null);
+  const [bookingDetails, setBookingDetails] = useState<{id: string, name: string, email: string, tourTitle: string, date: string, travelers?: number, totalCost?: number} | null>(null);
 
   // Wishlist animation state
   const [isWishlistAnimating, setIsWishlistAnimating] = useState(false);
@@ -145,7 +146,9 @@ export default function TourModal({ tour, isWishlisted, onToggleWishlist, onClos
         name,
         email,
         tourTitle: tour.title,
-        date: new Date().toISOString()
+        date: new Date().toISOString(),
+        travelers,
+        totalCost: tour.price * travelers
       };
       
       const existingBookings = JSON.parse(localStorage.getItem('luxevoyage_bookings') || '[]');
@@ -159,6 +162,7 @@ export default function TourModal({ tour, isWishlisted, onToggleWishlist, onClos
         onClose();
         setName("");
         setEmail("");
+        setTravelers(1);
         setBookingDetails(null);
         setCurrentImageIndex(0);
       }, 5000);
@@ -374,6 +378,8 @@ export default function TourModal({ tour, isWishlisted, onToggleWishlist, onClos
                         <div className="bg-black/50 p-4 rounded-xl text-left border border-white/5 space-y-3 mt-4 text-sm w-full text-zinc-300">
                           <div className="flex justify-between items-center"><span className="text-zinc-500">Booking ID</span> <span className="font-mono text-white">{bookingDetails.id}</span></div>
                           <div className="flex justify-between items-center"><span className="text-zinc-500">Name</span> <span className="text-white truncate max-w-[150px]">{bookingDetails.name}</span></div>
+                          <div className="flex justify-between items-center"><span className="text-zinc-500">Travelers</span> <span className="text-white">{bookingDetails.travelers}</span></div>
+                          <div className="flex justify-between items-center pt-2 border-t border-white/10"><span className="font-medium text-white">Total Paid</span> <span className="font-bold text-white">${bookingDetails.totalCost?.toLocaleString()}</span></div>
                         </div>
                       )}
                       <p className="text-zinc-400 text-sm mt-3">A confirmation has been sent to your email.</p>
@@ -410,6 +416,39 @@ export default function TourModal({ tour, isWishlisted, onToggleWishlist, onClos
                         />
                         {errors.email && <p className="text-red-500 text-xs mt-2 ml-1">{errors.email}</p>}
                       </div>
+
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="text-sm font-medium text-zinc-300">Travelers</label>
+                          <div className="flex items-center gap-4 bg-black border border-white/10 rounded-xl px-4 py-2">
+                            <button 
+                              type="button" 
+                              onClick={() => setTravelers(Math.max(1, travelers - 1))}
+                              className="text-zinc-400 hover:text-white disabled:opacity-50 cursor-pointer"
+                              disabled={travelers <= 1}
+                              aria-label="Decrease travelers"
+                            >
+                              -
+                            </button>
+                            <span className="text-white font-medium w-4 text-center">{travelers}</span>
+                            <button 
+                              type="button" 
+                              onClick={() => setTravelers(Math.min(10, travelers + 1))}
+                              className="text-zinc-400 hover:text-white disabled:opacity-50 cursor-pointer"
+                              disabled={travelers >= 10}
+                              aria-label="Increase travelers"
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="pt-4 border-t border-white/5 flex justify-between items-center text-white">
+                        <span className="font-medium text-zinc-300">Total Cost</span>
+                        <span className="text-xl font-bold">${(tour.price * travelers).toLocaleString()}</span>
+                      </div>
+
                       <Button type="submit" disabled={isBooking} className="w-full bg-white text-black hover:bg-white/90 font-bold h-14 rounded-xl text-base mt-2 cursor-pointer shadow-lg">
                         {isBooking ? (
                           <>
