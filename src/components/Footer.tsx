@@ -1,10 +1,50 @@
-import { Globe, Instagram, Twitter, Facebook, Youtube } from "lucide-react";
+import { Globe, Instagram, Twitter, Facebook, Youtube, ChevronDown } from "lucide-react";
 import { appData } from "@/src/data/travelData";
+
+const faqs = [
+  {
+    question: "How do I book a tour?",
+    answer: "You can book a tour directly through our website by clicking the 'Book Now' button on any tour page and filling out the secure booking form."
+  },
+  {
+    question: "What is your cancellation policy?",
+    answer: "We offer a full refund for cancellations made up to 30 days before the tour departure date. Cancellations made within 30 days may be subject to a cancellation fee."
+  },
+  {
+    question: "Are flights included in the tour price?",
+    answer: "International and domestic flights to the starting point of the tour are generally not included unless explicitly stated in the specific tour itinerary."
+  },
+  {
+    question: "Do I need travel insurance?",
+    answer: "Yes, comprehensive travel insurance covering medical, evacuation, and trip cancellation is mandatory for all our international tours."
+  }
+];
 
 export default function Footer() {
   return (
     <footer id="contact" className="bg-black pt-24 pb-12 border-t border-white/10" role="contentinfo">
       <div className="max-w-7xl mx-auto px-6">
+        {/* FAQ Section */}
+        <div className="mb-24">
+          <h2 className="text-3xl font-serif font-bold text-white mb-2 text-center">Frequently Asked Questions</h2>
+          <p className="text-zinc-400 text-center mb-10">Everything you need to know about our tours and services.</p>
+          <div className="max-w-3xl mx-auto space-y-4">
+            {faqs.map((faq, idx) => (
+              <details key={idx} className="group bg-zinc-900 border border-white/10 rounded-xl overflow-hidden [&_summary::-webkit-details-marker]:hidden">
+                <summary className="flex items-center justify-between cursor-pointer p-6 text-white font-medium focus:outline-none focus:bg-white/5 transition-colors">
+                  {faq.question}
+                  <span className="transition duration-300 group-open:-rotate-180">
+                    <ChevronDown className="w-5 h-5 text-zinc-400" />
+                  </span>
+                </summary>
+                <div className="p-6 pt-0 text-zinc-400 leading-relaxed bg-zinc-900">
+                  {faq.answer}
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
           <div className="lg:col-span-1">
             <div className="flex items-center gap-2 mb-6">
