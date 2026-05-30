@@ -1,15 +1,30 @@
 'use client';
 
-import { useState } from 'react';
-import { APIProvider, Map, AdvancedMarker, InfoWindow, Pin, useAdvancedMarkerRef } from '@vis.gl/react-google-maps';
-import { destinations } from '@/src/data/travelData';
+import { useState, useEffect } from 'react';
+import { APIProvider, Map, AdvancedMarker, InfoWindow, Pin, useAdvancedMarkerRef, useMap } from '@vis.gl/react-google-maps';
+import { destinations, tours } from '@/src/data/travelData';
 import Image from 'next/image';
+import { useMapFocus } from '@/src/context/MapContext';
 
 const API_KEY =
   process.env.NEXT_PUBLIC_GOOGLE_MAPS_PLATFORM_KEY ||
   (typeof window !== 'undefined' ? (window as any).GOOGLE_MAPS_PLATFORM_KEY : '') ||
   '';
 const hasValidKey = Boolean(API_KEY) && API_KEY !== 'YOUR_API_KEY';
+
+function MapUpdater() {
+  const map = useMap();
+  const { focusLocation } = useMapFocus();
+
+  useEffect(() => {
+    if (map && focusLocation) {
+      map.panTo(focusLocation);
+      map.setZoom(8);
+    }
+  }, [map, focusLocation]);
+
+  return null;
+}
 
 function MarkerWithInfoWindow({ destination }: { destination: typeof destinations[0] }) {
   const [markerRef, marker] = useAdvancedMarkerRef();
@@ -37,6 +52,41 @@ function MarkerWithInfoWindow({ destination }: { destination: typeof destination
               <p className="text-gray-500 text-xs">{destination.country}</p>
             </div>
             <p className="text-gray-700 text-xs leading-relaxed">{destination.description}</p>
+          </div>
+        </InfoWindow>
+      )}
+    </>
+  );
+}
+
+function TourMarkerWithInfoWindow({ tour }: { tour: typeof tours[0] }) {
+  const [markerRef, marker] = useAdvancedMarkerRef();
+  const [open, setOpen] = useState(false);
+
+  if (!(tour as any).coordinates) return null;
+
+  return (
+    <>
+      <AdvancedMarker ref={markerRef} position={(tour as any).coordinates} title={tour.title} onClick={() => setOpen((o) => !o)}>
+        <Pin background="#000000" glyphColor="#ffffff" borderColor="#ffffff" />
+      </AdvancedMarker>
+      {open && (
+        <InfoWindow anchor={marker} onCloseClick={() => setOpen(false)}>
+          <div className="flex flex-col gap-3 min-w-[200px] p-1 font-sans">
+            <div className="relative w-full h-32 rounded-lg overflow-hidden">
+              <Image 
+                src={tour.image} 
+                alt={tour.title} 
+                fill 
+                className="object-cover"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+            <div>
+              <h3 className="font-bold text-gray-900 text-sm leading-tight">{tour.title}</h3>
+              <p className="text-gray-500 text-xs">{tour.location}</p>
+            </div>
+            <p className="text-gray-700 text-xs leading-relaxed">{tour.duration} • ${tour.price.toLocaleString()}</p>
           </div>
         </InfoWindow>
       )}
@@ -83,8 +133,12 @@ export default function DestinationsMap() {
           zoomControl={true}
         >
           {destinations.map((dest) => (
-            <MarkerWithInfoWindow key={dest.id} destination={dest} />
+            <MarkerWithInfoWindow key={`dest-${dest.id}`} destination={dest} />
           ))}
+          {tours.map((tour) => (
+            <TourMarkerWithInfoWindow key={`tour-${tour.id}`} tour={tour} />
+          ))}
+          <MapUpdater />
         </Map>
       </APIProvider>
     </div>

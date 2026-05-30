@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import dynamic from "next/dynamic";
 import Image from "next/image";
+import { useMapFocus } from "@/src/context/MapContext";
 
 const TourModal = dynamic(() => import("./TourModal"), { ssr: false });
 const CompareModal = dynamic(() => import("./CompareModal"), { ssr: false });
@@ -320,6 +321,16 @@ const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlis
   const [isExpanded, setIsExpanded] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const cardRef = useRef<HTMLDivElement>(null);
+  const { setFocusLocation } = useMapFocus();
+
+  const handleCardClick = () => {
+    if ((tour as any).coordinates) {
+      setFocusLocation((tour as any).coordinates);
+      document.getElementById('destinations')?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      setIsExpanded(true);
+    }
+  };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
@@ -370,14 +381,14 @@ const TourCard: React.FC<TourCardProps> = ({ tour, isWishlisted, onToggleWishlis
         whileHover={{ y: -12, scale: 1.02 }}
         viewport={{ once: true, margin: "-50px" }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        onClick={() => setIsExpanded(true)}
+        onClick={handleCardClick}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => { setIsHovered(false); setMousePos({ x: 0, y: 0 }); }}
         onMouseMove={handleMouseMove}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            setIsExpanded(true);
+            handleCardClick();
           }
         }}
         tabIndex={0}
