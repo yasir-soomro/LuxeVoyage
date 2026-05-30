@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Star, Clock, MapPin, ArrowRight, ArrowUp, Check, Heart, Share2 } from "lucide-react";
+import { Star, Clock, MapPin, ArrowRight, ArrowUp, Check, Heart, Share2, Search } from "lucide-react";
 import { tours } from "@/src/data/travelData";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +11,7 @@ const TourModal = dynamic(() => import("./TourModal"), { ssr: false });
 const CompareModal = dynamic(() => import("./CompareModal"), { ssr: false });
 
 export default function Tours() {
+  const [searchQuery, setSearchQuery] = useState("");
   const [activeTag, setActiveTag] = useState("All");
   const [sortOrder, setSortOrder] = useState<"def" | "asc" | "desc">("def");
   const [isLoadingTours, setIsLoadingTours] = useState(true);
@@ -89,8 +90,14 @@ export default function Tours() {
 
   const filteredTours = useMemo(() => {
     let result = tours;
+    
+    if (searchQuery.trim() !== "") {
+      const q = searchQuery.toLowerCase();
+      result = result.filter((tour) => tour.title.toLowerCase().includes(q));
+    }
+    
     if (activeTag !== "All") {
-      result = tours.filter((tour) => tour.tags.includes(activeTag));
+      result = result.filter((tour) => tour.tags.includes(activeTag));
     }
 
     result = [...result];
@@ -102,7 +109,7 @@ export default function Tours() {
     }
 
     return result;
-  }, [activeTag, wishlist, sortOrder]);
+  }, [activeTag, wishlist, sortOrder, searchQuery]);
 
   return (
     <section id="tours" className="py-24 bg-black">
@@ -158,7 +165,37 @@ export default function Tours() {
         )}
 
         {/* Filters and Sort */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-16">
+        <div className="flex flex-col gap-6 mb-16">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="relative w-full md:w-auto">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <Search className="h-4 w-4 text-zinc-500" />
+              </div>
+              <input
+                type="text"
+                placeholder="Search tours..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full md:w-80 bg-zinc-900 border border-white/10 text-white text-sm rounded-full pl-11 pr-4 py-2 focus:outline-none focus:ring-1 focus:ring-white transition-colors hover:bg-zinc-800"
+                aria-label="Search tours filter"
+              />
+            </div>
+            
+            <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
+              <span className="text-zinc-500 text-sm font-medium">Sort by:</span>
+              <select
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value as any)}
+                className="bg-zinc-900 border border-white/10 text-white text-sm rounded-full px-4 py-2 cursor-pointer focus:outline-none focus:ring-1 focus:ring-white transition-colors hover:bg-zinc-800"
+                aria-label="Sort tours by price"
+              >
+                <option value="def">Recommended</option>
+                <option value="asc">Price: Low to High</option>
+                <option value="desc">Price: High to Low</option>
+              </select>
+            </div>
+          </div>
+
           <div className="flex flex-wrap justify-center md:justify-start gap-3">
             {allTags.map((tag) => (
               <button
@@ -173,20 +210,6 @@ export default function Tours() {
                 {tag}
               </button>
             ))}
-          </div>
-
-          <div className="flex items-center gap-3">
-            <span className="text-zinc-500 text-sm font-medium">Sort by:</span>
-            <select
-              value={sortOrder}
-              onChange={(e) => setSortOrder(e.target.value as any)}
-              className="bg-zinc-900 border border-white/10 text-white text-sm rounded-full px-4 py-2 cursor-pointer focus:outline-none focus:ring-1 focus:ring-white transition-colors hover:bg-zinc-800"
-              aria-label="Sort tours by price"
-            >
-              <option value="def">Recommended</option>
-              <option value="asc">Price: Low to High</option>
-              <option value="desc">Price: High to Low</option>
-            </select>
           </div>
         </div>
 
