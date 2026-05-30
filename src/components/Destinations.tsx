@@ -2,6 +2,9 @@ import { motion } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
 import { destinations } from "@/src/data/travelData";
 import Image from "next/image";
+import dynamic from "next/dynamic";
+
+const DestinationsMap = dynamic(() => import("./DestinationsMap"), { ssr: false });
 
 export default function Destinations() {
   return (
@@ -25,7 +28,7 @@ export default function Destinations() {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 [perspective:1000px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 [perspective:1000px] mb-24">
           {destinations.map((dest, index) => (
             <motion.a
               href="#tours"
@@ -64,6 +67,10 @@ export default function Destinations() {
               </div>
             </motion.a>
           ))}
+        </div>
+
+        <div className="border border-white/10 rounded-[2rem] p-2 bg-zinc-950 shadow-2xl overflow-hidden h-[600px] mb-8">
+          <DestinationsMap />
         </div>
       </div>
     </section>

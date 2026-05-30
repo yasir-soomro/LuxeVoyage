@@ -50,7 +50,8 @@ export const destinations = [
     country: "Italy",
     image: "https://images.unsplash.com/photo-1612698093158-e07ac200d44e?auto=format&fit=crop&q=80&w=1000",
     description: "Dramatic cliffs and turquoise waters meet colorful villages.",
-    category: "Coastal"
+    category: "Coastal",
+    coordinates: { lat: 40.6333, lng: 14.6029 }
   },
   {
     id: 2,
@@ -58,7 +59,8 @@ export const destinations = [
     country: "Japan",
     image: "https://images.unsplash.com/photo-1624253321171-1be53e12f5f4?auto=format&fit=crop&q=80&w=1000",
     description: "Ancient temples, traditional tea houses, and serene gardens.",
-    category: "Cultural"
+    category: "Cultural",
+    coordinates: { lat: 35.0116, lng: 135.7681 }
   },
   {
     id: 3,
@@ -66,7 +68,8 @@ export const destinations = [
     country: "Greece",
     image: "https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?auto=format&fit=crop&q=80&w=1000",
     description: "Iconic blue-domed churches overlooking the Aegean Sea.",
-    category: "Coastal"
+    category: "Coastal",
+    coordinates: { lat: 36.3932, lng: 25.4615 }
   },
   {
     id: 4,
@@ -74,7 +77,8 @@ export const destinations = [
     country: "Switzerland",
     image: "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&q=80&w=1000",
     description: "Majestic snow-capped peaks and pristine mountain lakes.",
-    category: "Adventure"
+    category: "Adventure",
+    coordinates: { lat: 46.5595, lng: 8.5630 }
   }
 ];
 
